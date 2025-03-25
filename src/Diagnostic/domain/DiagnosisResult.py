@@ -1,0 +1,22 @@
+from dataclasses import dataclass, field
+from typing import Any
+import datetime
+
+@dataclass
+class DiagnosisResult:
+    """
+    Almacena el resultado de la inferencia para un frame.
+    """
+    label: str
+    frame: Any
+    timestamp: datetime.datetime = field(default_factory=datetime.datetime.now)
+
+#Atributos mínimos:
+
+#label: Resultado o etiqueta obtenida de la inferencia (por ejemplo, "fisura", "corrosión", "ok").
+#frame: Referencia o identificación del frame evaluado (puede ser la ruta de la imagen, un identificador o incluso el objeto imagen).
+#timestamp: Marca temporal que indica cuándo se generó el resultado.
+
+# Se usa el decorador @dataclass para simplificar la definición de las clases y generar automáticamente métodos como __init__ y __repr__.
+# Campo 'frame': Se define con tipo Any para permitir flexibilidad; en una implementación real se podría especificar un tipo concreto (por ejemplo, np.ndarray si se usa OpenCV).
+# Default Factory en timestamp: Se utiliza field(default_factory=datetime.datetime.now) para que el valor de timestamp se asigne en el momento de instanciar la clase, evitando problemas al usar un valor estático.
