@@ -1,59 +1,63 @@
 from datetime import datetime
 from typing import Dict
 
-from Video.ports.inbound.video_lifecycle_port import VideoLifecyclePort
-from Video.domain.VideoSession import VideoSession
+from Video.ports.inbound import VideoLifecyclePort
+from Video.ports.outbound import StreamingControllerPort
+from Video.ports.outbound import NotificationControllerPort
+from Video.domain import VideoSession, VideoSessionStatus
+from Video.domain import Sessions
 
 class VideoLifecycleServices(VideoLifecyclePort):
     """
-    Implementa la gestión del ciclo de vida de la sesión de video.
+    Implementa los servicios de ciclo de vida:
+      - start_diagnostic
+      - stop_diagnostic
+      - get_session_status
+    Inyecta los puertos de salida 'streaming_controller' y 'notification_controller'.
     """
 
-    def __init__(self):
+    def __init__(self, streaming_controller: StreamingControllerPort, notification_controller: NotificationControllerPort):
+        """
+        Inyecta el puerto de salida para obtener frames.
+        """
         # Aquí se podría usar un repositorio o un diccionario en memoria
-        self.sessions: Dict[str, VideoSession] = {}
+        self.sessions: Dict[str, VideoSession] = {} # Esta asignación la vamos a dejar asÍ? Ya tenemos la clase Sessions
+        self.streaming_controller = streaming_controller
+        self.notification_controller = notification_controller
+        self.sessions_container = Sessions()
 
-    def start_diagnostic(self, session_id: str) -> None:
+
+    def start_diagnostic(self) -> str: #Cambiar con UUID 
         """
-        Crea o actualiza la VideoSession para marcarla como IN_PROGRESS.
+        Crea una nueva VideoSession, inyectando los puertos outbound.
+        Inicia el stream y retorna el session_id generado.
         """
-        session = self.sessions.get(session_id)
-        if session is None:
-            session = VideoSession(session_id=session_id, status="IN_PROGRESS")
-            self.sessions[session_id] = session
-        else:
-            session.status = "IN_PROGRESS"
-            session.start_time = datetime.now()
-            session.end_time = None
+        session = VideoSession(
+            streaming_controller=self.streaming_controller,
+            notification_controller=self.notification_controller
+        )
+        self.sessions_container.add_session(session)
+        session.start_session() #Inicia el stream
+
+        # self.sessions[session.session_id] = session #Así estaba antes
+        return session.session_id
+        
 
     def stop_diagnostic(self, session_id: str) -> None:
         """
-        Marca la sesión como STOPPED y registra end_time.
+        Detiene la sesión, cerrando el stream y actualizando el estado.
         """
-        session = self.sessions.get(session_id)
+        # session = self.sessions.get(session_id) #Así estaba antes        
+        session = self.sessions_container.get_session(session_id)
+
         if session:
-            session.status = "STOPPED"
-            session.end_time = datetime.now()
+            session.update_status(VideoSessionStatus.STOPPED)
+            session.stop_session()
 
-    def pause_diagnostic(self, session_id: str) -> None:
-        """
-        Marca la sesión como PAUSED.
-        """
-        session = self.sessions.get(session_id)
-        if session and session.status == "IN_PROGRESS":
-            session.status = "PAUSED"
-
-    def resume_diagnostic(self, session_id: str) -> None:
-        """
-        Reanuda la sesión si está en PAUSED.
-        """
-        session = self.sessions.get(session_id)
-        if session and session.status == "PAUSED":
-            session.status = "IN_PROGRESS"
 
     def get_session_status(self, session_id: str) -> str:
         """
-        Retorna el estado actual de la sesión.
+        Retorna el estado actual de la sesión como cadena.
         """
-        session = self.sessions.get(session_id)
-        return session.status if session else "NOT_FOUND"
+        session = self.sessions_container.get_session(session_id)
+        return session.status.value if session else "NOT_FOUND"

@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any
+import numpy as np
 
 @dataclass
 class Frame:
     """
-    Representa un frame (o imagen) obtenido desde el DVR o la fuente de video.
+    Representa un frame obtenido desde el DVR o fuente de video.
+    El atributo 'data' es un np.ndarray que representa la imagen.
     """
     frame_id: str
-    data: Any  # Puede ser la ruta de la imagen, un objeto OpenCV, etc.
+    data: np.ndarray
     timestamp: datetime

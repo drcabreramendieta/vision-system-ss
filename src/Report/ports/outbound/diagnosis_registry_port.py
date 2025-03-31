@@ -1,38 +1,38 @@
 
 from abc import ABC, abstractmethod
-from typing import List
 from Report.domain.ReportEntry import ReportEntry
-from Report.domain.Report import Report
+from Report.domain import Report
+from Report.domain import Event
 
 class DiagnosisRegistryPort(ABC):
     """
-    Permite persistir o recuperar entradas de reporte.
+    Permite persistir y recuperar información de reportes (Report, ReportEntry, Event).
     """
-
-    @abstractmethod
-    def save_entry(self, entry: ReportEntry) -> None:
-        """
-        Guarda un ReportEntry en la base de datos o almacenamiento correspondiente.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_entries_by_session(self, session_id: str) -> List[ReportEntry]:
-        """
-        Retorna todas las entradas asociadas a la sesión.
-        """
-        raise NotImplementedError
 
     @abstractmethod
     def save_report(self, report: Report) -> None:
         """
-        Guarda un Report completo, si fuera necesario.
+        Guarda o actualiza un Report en la base de datos.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def save_report_entry(self, entry: ReportEntry) -> None:
+        """
+        Guarda un ReportEntry (frame asociado a cambio de estado).
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def save_event(self, event: Event) -> None:
+        """
+        Guarda un evento que representa un cambio de estado.
         """
         raise NotImplementedError
 
     @abstractmethod
     def get_report(self, session_id: str) -> Report:
         """
-        Retorna un Report completo a partir de la información persistida.
+        Recupera el Report de una sesión específica.
         """
         raise NotImplementedError

@@ -1,4 +1,5 @@
 from .Frame import Frame
-from .VideoSession import VideoSession
+from .VideoSession import VideoSession, VideoSessionStatus
+from .Sessions import Sessions
 
-__all__ = ["Frame", "VideoSession"]
+__all__ = ["Frame", "VideoSession", "VideoSessionStatus", "Sessions"]

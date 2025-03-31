@@ -2,6 +2,7 @@
 
 from typing import Any
 from Diagnostic.domain.DiagnosisResult import DiagnosisResult
+from Diagnostic.domain import InferenceLabel
 from Diagnostic.domain.Model import Model
 from Diagnostic.ports.inbound.diagnosis_services_port import DiagnosisServicesPort
 from Diagnostic.ports.outbound.model_repository_port import ModelRepositoryPort
@@ -31,7 +32,9 @@ class DiagnosisServicesImpl(DiagnosisServicesPort):
         self.notification = notification
         self.active_model = active_model
 
-    def run_inference(self, frame: Any) -> DiagnosisResult:
+
+    # Debe ser DiagnosisResult? El resultado debe ser del tipo DiagnosisResult en donde se encapsula el frame, el label y el timestamp o solo la etiqueta?
+    def run_inference(self, frame: Any) -> InferenceLabel: #InferenceLabel tiene el label en un formato enum
         """
         Ejecuta la inferencia sobre el frame dado utilizando el modelo activo.
 
@@ -45,10 +48,11 @@ class DiagnosisServicesImpl(DiagnosisServicesPort):
         :return: Objeto DiagnosisResult con el resultado de la inferencia.
         """
         # Ejecuta la inferencia usando el modelo activo
-        result = self.model_repository.run_inference(self.active_model, frame)
+        result = self.model_repository.run_inference(self.active_model, frame) #RESULT SOLO TIENE TIPO InferenceLabel, POR LO TANTO NO SE PODRÍA ACCEDER A result.label, LA RESPUESTA DE run_inference DEBE SER del tipo DiagnosisResult
+        # PREGUNTAR A DIEGO
         
         # Notifica el resultado obtenido
         self.notification.notify_result(result)
         
         # Retorna el resultado de la inferencia
-        return result
+        return result.label # Solo retornamos la etiqueta

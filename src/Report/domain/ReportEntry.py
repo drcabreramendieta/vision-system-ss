@@ -1,15 +1,24 @@
-
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
-@dataclass
 class ReportEntry:
     """
-    Representa un “registro” en el reporte, correspondiente a un frame evaluado.
+    Representa la información de un frame (o evento) asociado a una sesión.
+    Se utiliza para guardar datos puntuales en el reporte.
     """
-    session_id: str
-    frame_id: str
-    data: Any  # puede ser la imagen, la ruta, etc.
-    label: str
-    timestamp: datetime
+
+    def __init__(self, session_id, frame, label, timestamp): #Ponemos algo en el timestamp?
+        """
+        :param session_id: Identificador de la sesión a la que pertenece este registro.
+        :param frame: Frame (imagen o representación) asociado al cambio de estado.
+        :param label: Etiqueta de diagnóstico (p.ej. "DEFECT", "OK") u otro identificador.
+        :param timestamp: Momento en que se generó este registro.
+        """
+        self.session_id = session_id
+        self.frame = frame
+        self.label = label
+        self.timestamp = timestamp
+
+    def __repr__(self):
+        return (f"ReportEntry(session_id={self.session_id}, "
+                f"label={self.label}, timestamp={self.timestamp})")

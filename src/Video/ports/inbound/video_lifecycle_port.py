@@ -5,7 +5,7 @@ class VideoLifecyclePort(ABC):
     """
     Expone métodos para controlar la sesión de video y, por ende, el ciclo de vida del diagnóstico.
     """
-
+    # Se debe cambiar el tipo de dato de session_id
     @abstractmethod
     def start_diagnostic(self, session_id: str) -> None:
         """
@@ -17,20 +17,6 @@ class VideoLifecyclePort(ABC):
     def stop_diagnostic(self, session_id: str) -> None:
         """
         Detiene la sesión, marcándola como STOPPED.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def pause_diagnostic(self, session_id: str) -> None:
-        """
-        Pausa la sesión en curso (opcional).
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def resume_diagnostic(self, session_id: str) -> None:
-        """
-        Reanuda la sesión que estaba pausada (opcional).
         """
         raise NotImplementedError
 

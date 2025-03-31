@@ -1,14 +1,16 @@
 from dataclasses import dataclass, field
-from typing import Any
 import datetime
+from Diagnostic.domain import InferenceLabel
+import numpy as np
 
 @dataclass
 class DiagnosisResult:
     """
     Almacena el resultado de la inferencia para un frame.
+    El atributo 'label' es de tipo InferenceLabel, encapsulando el valor entero.
     """
-    label: str
-    frame: Any
+    label: InferenceLabel
+    frame: np.ndarray
     timestamp: datetime.datetime = field(default_factory=datetime.datetime.now)
 
 #Atributos mínimos:

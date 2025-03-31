@@ -1,67 +1,52 @@
 # file: report/application/report_services.py
 
 from datetime import datetime
-from typing import Any
-
-from Report.ports.inbound.report_services_port import ReportServicesPort
-from Report.ports.outbound.diagnosis_registry_port import DiagnosisRegistryPort
-from Report.ports.outbound.terminal_notification_port import TerminalNotificationPort
-
-from Report.domain.ReportEntry import ReportEntry
-from Report.domain.Report import Report
+from Report.ports.inbound import ReportServicesPort
+from Report.ports.outbound import DiagnosisRegistryPort
+from Report.ports.outbound import NotificationControllerPort
+from Report.domain import ReportEntry
+from Report.domain import Report
+from Report.domain import Event
 
 class ReportServices(ReportServicesPort):
     """
-    Implementa el puerto de entrada para manejar la recepción de resultados y la generación de reportes.
+    Implementa los métodos para gestionar la creación de ReportEntry y la generación de resúmenes.
     """
 
     def __init__(self, 
-                 registry_port: DiagnosisRegistryPort, 
-                 notification_port: TerminalNotificationPort):
+                 storage_port: DiagnosisRegistryPort, 
+                 notification_port: NotificationControllerPort):
         """
-        Inyecta los puertos de salida necesarios.
+        Inyecta los puertos de salida:
+         - diagnosis_registry_port (almacenamiento de reportes)
+         - notification_controller_port (notificaciones)
         """
-        self.registry_port = registry_port
+        self.storage_port = storage_port
         self.notification_port = notification_port
 
-    def add_result(self, session_id: str, frame: Any, label: str, timestamp: datetime) -> None:
+    def add_result(self, session_id: str, frame, label: str, timestamp: datetime) -> None:
         """
-        Crea un ReportEntry y lo guarda a través del DiagnosisRegistryPort.
+        Almacena un nuevo 'ReportEntry' en el reporte de la sesión, típicamente
+        cuando se detecta un cambio de estado y se desea guardar ese frame.
         """
-        entry = ReportEntry(
-            session_id=session_id,
-            frame_id=str(getattr(frame, "frame_id", "unknown_frame")),
-            data=getattr(frame, "data", frame),  # fallback si 'frame' es un simple dict
-            label=label,
-            timestamp=timestamp
-        )
-        self.registry_port.save_entry(entry)
-
-    def get_report(self, session_id: str) -> Report:
-        """
-        Recupera todas las entradas de la sesión y construye un objeto Report.
-        """
-        entries = self.registry_port.get_entries_by_session(session_id)
-        # Se podría retornar un Report guardado, pero aquí lo construimos en el momento
-        report = Report(session_id=session_id, entries=entries)
-        return report
+        entry = ReportEntry(session_id, frame, label, timestamp)
+        # Guardamos el entry en el storage
+        self.storage_port.save_report_entry(entry)
+        # Opcional: Podríamos guardar un 'Event' si queremos
+        #event = Event(session_id, old_state, new_state, timestamp, frame=frame) # Esto se debe pensar bien, PREGUNTAR DIEGO
+        #self.storage_port.save_event(event)
+        #self.notification_port.notify_event(event)
 
     def generate_summary(self, session_id: str) -> str:
         """
-        Crea un resumen de la sesión (por ejemplo, conteo de defectos vs OK).
-        Luego notifica al Terminal si se desea.
+        Construye un resumen de la sesión, lo notifica y lo retorna.
         """
-        entries = self.registry_port.get_entries_by_session(session_id)
-        
-        # Ejemplo: contar cuántas veces aparece cada label
-        label_count = {}
-        for e in entries:
-            label_count[e.label] = label_count.get(e.label, 0) + 1
-        
-        summary_str = f"Summary for session {session_id}:\n"
-        for label, count in label_count.items():
-            summary_str += f"  {label}: {count}\n"
+        # Recuperar el Report actual
+        report = self.storage_port.get_report(session_id)
+        if not report:
+            return f"No existe reporte para la sesión {session_id}"
 
-        # Notificar al Terminal System
-        self.notification_port.notify_summary(session_id, summary_str)
-        return summary_str
+        summary = report.generate_summary()
+        # Notificar que el reporte está listo
+        self.notification_port.notify_report_ready(session_id, summary)
+        return summary
