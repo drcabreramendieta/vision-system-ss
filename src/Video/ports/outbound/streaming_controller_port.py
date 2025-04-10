@@ -1,3 +1,4 @@
+from uuid import UUID
 from typing import Callable
 from abc import ABC, abstractmethod
 from Video.domain.Frame import Frame
@@ -8,7 +9,7 @@ class StreamingControllerPort(ABC):
     """
 
     @abstractmethod
-    def open_stream(self,session_id: str, observer: Callable[[Frame],None]) -> None:
+    def open_stream(self,session_id: UUID, observer: Callable[[Frame],None]) -> bool:
         """
         Abre la conexión/stream para la sesión dada y, por cada frame recibido,
         invoca la función 'observer'.
@@ -17,7 +18,7 @@ class StreamingControllerPort(ABC):
 
 
     @abstractmethod
-    def close_stream(self, session_id: str) -> None:
+    def close_stream(self, session_id: UUID) -> bool:
         """
         Cierra el stream asociado a la sesión.
         """

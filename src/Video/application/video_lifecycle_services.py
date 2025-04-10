@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Dict
-
+from uuid import UUID
 from Video.ports.inbound import VideoLifecyclePort
 from Video.ports.outbound import StreamingControllerPort
 from Video.ports.outbound import NotificationControllerPort
@@ -27,7 +27,7 @@ class VideoLifecycleServices(VideoLifecyclePort):
         self.sessions_container = Sessions()
 
 
-    def start_diagnostic(self) -> str: #Cambiar con UUID 
+    def start_diagnostic(self) -> UUID: 
         """
         Crea una nueva VideoSession, inyectando los puertos outbound.
         Inicia el stream y retorna el session_id generado.
@@ -43,16 +43,13 @@ class VideoLifecycleServices(VideoLifecyclePort):
         return session.session_id
         
 
-    def stop_diagnostic(self, session_id: str) -> None:
+    def stop_diagnostic(self, session_id: UUID) -> None:
         """
         Detiene la sesión, cerrando el stream y actualizando el estado.
         """
         # session = self.sessions.get(session_id) #Así estaba antes        
         session = self.sessions_container.get_session(session_id)
-
-        if session:
-            session.update_status(VideoSessionStatus.STOPPED)
-            session.stop_session()
+        session.stop_session()
 
 
     def get_session_status(self, session_id: str) -> str:

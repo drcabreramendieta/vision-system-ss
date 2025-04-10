@@ -1,4 +1,4 @@
-
+from uuid import UUID
 from abc import ABC, abstractmethod
 from datetime import datetime
 from Video.domain.Frame import Frame
@@ -9,7 +9,7 @@ class NotificationControllerPort(ABC):
     """
 
     @abstractmethod
-    def notify(self, session_id: str, frame:Frame) -> None: # BUSCAR COMO PONER EL TIPO DE DATO DEL SESSION_ID QUE VIENE DE LA CLASE SESSIONS
+    def notify(self, session_id: UUID, frame:Frame) -> None: # BUSCAR COMO PONER EL TIPO DE DATO DEL SESSION_ID QUE VIENE DE LA CLASE SESSIONS
         """
         Envía el frame (con su ID, datos y timestamp) al Módulo de Diagnóstico para su inferencia.
         """

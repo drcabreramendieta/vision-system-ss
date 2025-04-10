@@ -1,6 +1,6 @@
 # diagnostic/application/diagnosis_services.py
 
-from typing import Any
+import numpy as np
 from Diagnostic.domain.DiagnosisResult import DiagnosisResult
 from Diagnostic.domain import InferenceLabel
 from Diagnostic.domain.Model import Model
@@ -32,9 +32,8 @@ class DiagnosisServicesImpl(DiagnosisServicesPort):
         self.notification = notification
         self.active_model = active_model
 
-
-    # Debe ser DiagnosisResult? El resultado debe ser del tipo DiagnosisResult en donde se encapsula el frame, el label y el timestamp o solo la etiqueta?
-    def run_inference(self, frame: Any) -> InferenceLabel: #InferenceLabel tiene el label en un formato enum
+    # Un core de paso no sirve de nada (hay que evitar eso)
+    def run_inference(self, frame: np.ndarray) -> InferenceLabel: #InferenceLabel tiene el label en un formato enum. # Por eso esto esta bien
         """
         Ejecuta la inferencia sobre el frame dado utilizando el modelo activo.
 
@@ -48,8 +47,7 @@ class DiagnosisServicesImpl(DiagnosisServicesPort):
         :return: Objeto DiagnosisResult con el resultado de la inferencia.
         """
         # Ejecuta la inferencia usando el modelo activo
-        result = self.model_repository.run_inference(self.active_model, frame) #RESULT SOLO TIENE TIPO InferenceLabel, POR LO TANTO NO SE PODRÍA ACCEDER A result.label, LA RESPUESTA DE run_inference DEBE SER del tipo DiagnosisResult
-        # PREGUNTAR A DIEGO
+        result = self.model_repository.run_inference(self.active_model, frame) #ESTO ESTA BIEN XQ SIRVE COMO FILTRO DE INFORMACIÓN
         
         # Notifica el resultado obtenido
         self.notification.notify_result(result)
