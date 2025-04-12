@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
+import numpy as np
 from Diagnostic.domain.Model import Model
 from Diagnostic.domain.DiagnosisResult import DiagnosisResult
+from Diagnostic.domain import InferenceLabel
 
 class ModelRepositoryPort(ABC):
     """
@@ -25,7 +27,7 @@ class ModelRepositoryPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def run_inference(self, model: Model, frame: Any) -> DiagnosisResult:
+    def run_inference(self, model: Model, frame: np.ndarray) -> DiagnosisResult: # Para ser más coherentes con la arquitectura hexagonal, es mejor devolver un DiagnosisResult (que contiene la etiqueta, timestamp y el frame) en lugar de solo la etiqueta. Esto hace que exista coherencia y al momento de notificar, no tengamos que pasarle el frame nuevamente al puerto de salida de notificación, sino que ya va todo empaquetado en el DiagnosisResult. Hablar con Diego
         """
         Ejecuta la inferencia con el 'model' especificado
         y el frame suministrado, retornando un DiagnosisResult.

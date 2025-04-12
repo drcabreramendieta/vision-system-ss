@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 from Diagnostic.domain.DiagnosisResult import DiagnosisResult
 
-class NotificationPort(ABC):
+class NotificationControllerPort(ABC):
     """
     Define la interfaz para notificar o reportar resultados
     de la inferencia a otro subsistema (ej. Módulo de Reporte).
     """
 
     @abstractmethod
-    def notify_result(self, result: DiagnosisResult) -> None:
+    def notify_result(self, result: DiagnosisResult) -> bool:
         """
         Envía el resultado (label, frame, timestamp) al componente
         que corresponda (por ejemplo, un Módulo de Reporte).

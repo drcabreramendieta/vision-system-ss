@@ -10,7 +10,7 @@ class DiagnosisResult:
     El atributo 'label' es de tipo InferenceLabel, encapsulando el valor entero.
     """
     label: InferenceLabel
-    frame: np.ndarray
+    frame: np.ndarray #La idea es almacenar la imagen o el frame que se ha evaluado, pero en un formato más manejable.
     timestamp: datetime.datetime = field(default_factory=datetime.datetime.now)
 
 #Atributos mínimos:

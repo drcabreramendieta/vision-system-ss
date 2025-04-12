@@ -13,7 +13,6 @@ class ConfigServicesImpl(ConfigServicesPort):
     Esta clase inyecta la dependencia del puerto de salida 'ModelRepositoryPort'
     para obtener la lista de modelos y cargar un modelo específico.
     """
-
     def __init__(self, model_repository: ModelRepositoryPort): # Inyectamos la dependencia
         """
         Constructor que recibe el adaptador de salida para el repositorio de modelos.
