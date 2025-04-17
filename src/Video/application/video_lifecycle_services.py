@@ -16,15 +16,13 @@ class VideoLifecycleServices(VideoLifecyclePort):
     Inyecta los puertos de salida 'streaming_controller' y 'notification_controller'.
     """
 
-    def __init__(self, streaming_controller: StreamingControllerPort, notification_controller: NotificationControllerPort):
+    def __init__(self, streaming_controller: StreamingControllerPort, notification_controller: NotificationControllerPort, sessions_container: Sessions):
         """
         Inyecta el puerto de salida para obtener frames.
         """
-        # Aquí se podría usar un repositorio o un diccionario en memoria
-        self.sessions: Dict[str, VideoSession] = {} # Esta asignación la vamos a dejar asÍ? Ya tenemos la clase Sessions
         self.streaming_controller = streaming_controller
         self.notification_controller = notification_controller
-        self.sessions_container = Sessions()
+        self.sessions_container = sessions_container
 
 
     def start_diagnostic(self) -> UUID: 
