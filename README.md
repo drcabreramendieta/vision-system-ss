@@ -17,14 +17,15 @@ La organización de carpetas presentada (adapters, application, domain, ports), 
 Bajo un enfoque de Arquitectura Hexagonal, el core (domain + application) no sabe nada de infraestructura o módulos externos. Las interfaces que el core ofrece o requiere se definen en la carpeta ports; las implementaciones de dichas interfaces se hallan en adapters.
 
 **Ejecución**
-En un terminal ejecutar:
+1. Agregar la ruta del archivo mp4 a config.yaml.
+2. En un terminal ejecutar:
 ```
 export PYTHONPATH=src/
 fastapi run src/application.py --reload
 ```
-En el navegador acceder a la url http://localhost:8000/docs
+3. En el navegador acceder a la url http://localhost:8000/docs
 
-TODO:
+# TODO:
 - El adaptador de frames locales debe capturar y emitir los frames en un hilo diferente al principal. Caso contrario la ejecución de la petición no termina.
 - Se debe generar el contenedor para todos los módulos siguiendo los lineamientos del de Video.
 - Se debe modificar el contenedor de aplicación agregando los otros contenedores y las dependencias.
