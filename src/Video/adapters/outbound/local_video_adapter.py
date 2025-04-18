@@ -33,6 +33,7 @@ class LocalVideoAdapter(StreamingControllerPort):
         :param video_path: Ruta al archivo de video local.
         """
         self.video_path = video_path
+        print("path video:", self.video_path)
         self.cap = None  # Se usará para almacenar el objeto VideoCapture
 
     def open_stream(self, session_id: str, observer: Callable[[Frame], None]) -> bool:
