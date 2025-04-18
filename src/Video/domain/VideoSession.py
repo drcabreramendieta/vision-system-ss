@@ -61,7 +61,8 @@ class VideoSession: #
         :param frame: Objeto que representa el frame recibido.
         """
         # Aquí se puede agregar lógica adicional para procesar el frame antes de enviarlo.
-        self.notification_controller.notify(session_id=self.session_id, frame=frame) #Se envía el frame al módulo de diagnóstico   
+        self.notification_controller.notify(session_id=self.session_id, frame=frame) #Se envía el frame al módulo de diagnóstico
+        print('frame_id',frame.timestamp) 
     
     def stop_session(self) -> None:
         """
