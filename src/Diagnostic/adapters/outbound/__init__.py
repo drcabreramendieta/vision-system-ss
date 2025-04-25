@@ -1,3 +1,4 @@
-from .mlflow_model_repository_adapter import MLflowModelRepositoryAdapter
+from .mlflow_model_repository_adapter import MlflowModelRepositoryAdapter
+from .diagnosis_notification_controller_adapter import DiagnosisNotificationControllerAdapter
 
-__all__ = ["MLflowModelRepositoryAdapter"] # Volvemos visible la implementación del puerto de salida
+__all__ = ["MlflowModelRepositoryAdapter", "DiagnosisNotificationControllerAdapter"] # Volvemos visible la implementación del puerto de salida

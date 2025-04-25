@@ -1,9 +1,9 @@
-# file: run_mlflow_adapter_example.py
+# ESTO HAY QUE CAMBIAR COMPLETAMENTE
 
 import mlflow
 import numpy as np
 import datetime
-from Diagnostic.adapters.outbound import MLflowModelRepositoryAdapter
+from Diagnostic.adapters.outbound import MlflowModelRepositoryAdapter
 from Diagnostic.domain.Model import Model
 from Diagnostic.domain.DiagnosisResult import DiagnosisResult
 from Diagnostic.domain.InferenceLabel import InferenceLabel
@@ -19,7 +19,7 @@ def main():
     mlflow.set_tracking_uri(tracking_uri)
     
     # Instanciar el adaptador para el Model Registry usando MLflow.
-    adapter = MLflowModelRepositoryAdapter(tracking_uri=tracking_uri)
+    adapter = MlflowModelRepositoryAdapter(tracking_uri=tracking_uri)
     
     # Listar los modelos disponibles en el registro
     models = adapter.get_models()
