@@ -41,13 +41,18 @@ class VideoLifecycleServices(VideoLifecyclePort):
         return session.session_id
         
 
-    def stop_diagnostic(self, session_id: UUID) -> None:
+    def stop_diagnostic(self, session_id: UUID) -> str:
         """
         Detiene la sesión, cerrando el stream y actualizando el estado.
         """
         # session = self.sessions.get(session_id) #Así estaba antes        
         session = self.sessions_container.get_session(session_id)
+        if not session:
+            raise KeyError(f"Sesión {session_id} no encontrada")
         session.stop_session()
+        # Eliminamos del contenedor opcionalmente
+        #self.sessions_container.remove_session(session_id)
+        return "stopped"
 
 
     def get_session_status(self, session_id: str) -> str:

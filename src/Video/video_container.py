@@ -11,7 +11,7 @@ class VideoContainer(containers.DeclarativeContainer):
     sessions_container = providers.Factory(Sessions)
     stream_controller = providers.Factory(
         LocalVideoAdapter,
-        video_path=config.video.video_path
+        video_path=config.video.video_path   #Así se usan las variables de configuración
         )
     notification_controller = providers.Factory(
         DiagnosticNotificationControllerAdapter,

@@ -17,36 +17,19 @@ class ApplicationContainer(containers.DeclarativeContainer):
     #    diagnosis_services=mock_diagnosis
     #    )
 
-    """
-    Contenedor raíz de la aplicación:
-      - Carga configuración general (config.yaml)
-      - Anida los contenedores de Video, Diagnostic y Report
-      - Centraliza el wiring de adaptadores inbound (FastAPI routers)
-    """
-    wiring_config = containers.WiringConfiguration(  #Esto me dió el GPT, pero no sé si es correcto. Ya que internamente ya se hace un wiring
-        modules=[
-            "Video.adapters.inbound.fastapi_video_services_adapter",
-            "Diagnostic.adapters.inbound.fastapi_diagnostic_services_adapter",
-            "Report.adapters.inbound.fastapi_report_services_adapter",
-        ]
+    # Subcontenedores
+    report = providers.Container(    # Este no tiene dependencias
+        ReportContainer,
     )
 
-    # Configuración general con secciones por módulo
-    config = providers.Configuration(yaml_files=["config.yaml"]) #Se puede hacer esto con un solo archivo de configuración o se puede hacer uno por módulo. Preguntar a Diego si es necesario tener un config.yaml por módulo o uno general?
-
-    # Subcontenedores
     diagnostic = providers.Container(
         DiagnosticContainer,
-        config=config.diagnostic,
-    )
-
-    report = providers.Container(
-        ReportContainer,
-        config=config.report,
+        report_services=report.report_services,  # Inyectar el servicio de Report
     )
 
     video = providers.Container(
         VideoContainer,
-        config=config.video,
-        diagnosis_services=mock_diagnosis,
+        diagnosis_services=diagnostic.diagnosis_services,  # Inyectar el servicio de diagnóstico
     )
+
+# Las APIs de cada módulo sería parecido como los de video 

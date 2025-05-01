@@ -31,17 +31,16 @@ class ConfigServicesImpl(ConfigServicesPort):
         """
         return self.model_repository.get_models()
 
-    def set_model(self, model: Model) -> None:
+    def set_model(self, model_id: str) -> bool: #Esto no debería recibir un modelo, sino un id o la referencia a un objeto. Debe devolver un true o false
         """
         Configura el modelo a utilizar mediante su carga desde el Model Repository.
-        Recibe una instancia de Model y usa su 'id' para cargarlo.
-        
+
         :param model: Instancia de Model con la información a configurar.
         """
-        # Llama al método 'load_model' del repositorio para "cargar" el modelo.
-        loaded_model = self.model_repository.load_model(model.id)
+        # Llama al método 'load_model' del repositorio para "cargar" el modelo. Cargar el modelo (ya con el uso de adaptadores) podría significar que se lo guarda en memoria y se lo deja disponible para la inferencia. Ya con el adaptador de MLflow, se encargaría de cargar el modelo en memoria (o algo por el estilo).
+        loaded_model = self.model_repository.load_model(model_id)
         # Se almacena el modelo cargado para uso posterior.
         self.active_model = loaded_model
-
-
-
+        # load_model busca dentro de la lista de modelos y le dice al repositorio que cargue o active el modelo
+        # Cuando se implemente el adaptador del repositorio de modelos, allí hay instrucciones para cargar el modelo con MLflow
+        # Implementar los adaptadores de salida 

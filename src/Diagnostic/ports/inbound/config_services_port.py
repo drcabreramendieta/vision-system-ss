@@ -9,16 +9,14 @@ class ConfigServicesPort(ABC):
 
     @abstractmethod
     def get_models(self) -> List[Model]:
-        """
-        Retorna la lista de modelos disponibles.
-        """
+        """Retorna la lista de modelos disponibles."""
         raise NotImplementedError
 
     @abstractmethod
-    def set_model(self, model: Model) -> None:
+    def set_model(self, model_id: str) -> bool:
         """
-        Recibe una instancia de 'Model' y la establece
-        como modelo a usar (vía carga en el repositorio).
+        Recibe el identificador del modelo a establecer como activo.
+        Devuelve True si el modelo se cargó correctamente, False en caso contrario.
         """
         raise NotImplementedError
 

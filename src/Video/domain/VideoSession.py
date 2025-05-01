@@ -1,10 +1,11 @@
 from __future__ import annotations  # Para que las anotaciones se conviertan en cadenas
 from typing import TYPE_CHECKING
-import uuid
+from uuid import UUID # Para generar un UUID único. Ajuste realizado para que sea UUID en lugar de uuid4() para evitar la creación de un nuevo UUID cada vez que se crea una sesión. NO SE SI ESTO ES LO QUE QUEREMOS
 import datetime
 from enum import Enum, auto
 from datetime import datetime
 from typing import Optional
+
 
 if TYPE_CHECKING: # Para evitar importaciones circulares
     from Video.ports.outbound.streaming_controller_port import StreamingControllerPort
@@ -33,7 +34,7 @@ class VideoSession: #
         :param streaming_controller: Instancia del puerto de salida para el control del streaming.
         :param notification_controller: Instancia del puerto de salida para notificar al módulo de diagnóstico.
         """
-        self.session_id = uuid.uuid4()  # Genera automáticamente un identificador único para la sesión. 
+        self.session_id = UUID  # Genera automáticamente un identificador único para la sesión. 
         self.status = VideoSessionStatus.CREATED # Estado inicial de la sesión.
         self.start_time = start_time
         self.end_time = None

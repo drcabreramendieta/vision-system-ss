@@ -16,7 +16,7 @@ class ReportContainer(containers.DeclarativeContainer):
     """
     wiring_config = containers.WiringConfiguration(
         modules=[
-            "Report.adapters.inbound.fastapi_report_services_adapter", # Preguntar a Diego si sería algo así
+            "Report.adapters.inbound.fastapi_report_services_adapter", # Preguntar a Diego si sería algo así. SOLO SI SE TRABAJA CON APIS
         ]
     )
 

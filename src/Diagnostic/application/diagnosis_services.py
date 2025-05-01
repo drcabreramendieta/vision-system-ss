@@ -2,11 +2,10 @@
 
 import numpy as np
 from Diagnostic.domain.DiagnosisResult import DiagnosisResult
-from Diagnostic.domain import InferenceLabel
-from Diagnostic.domain.Model import Model
 from Diagnostic.ports.inbound.diagnosis_services_port import DiagnosisServicesPort
 from Diagnostic.ports.outbound.model_repository_port import ModelRepositoryPort
 from Diagnostic.ports.outbound.notification_controller_port import NotificationControllerPort
+from Diagnostic.application.config_services import ConfigServicesImpl
 
 class DiagnosisServicesImpl(DiagnosisServicesPort):
     """
@@ -19,31 +18,30 @@ class DiagnosisServicesImpl(DiagnosisServicesPort):
       
     Se asume que el modelo activo ya fue configurado (por ejemplo, mediante ConfigServicesImpl).
     """
-    def __init__(self, model_repository: ModelRepositoryPort, notification: NotificationControllerPort, active_model: Model): # Inyectamos las dependencias
+    def __init__(self,
+                 model_repository: ModelRepositoryPort,
+                 notification_controller: NotificationControllerPort,
+                 config_services: ConfigServicesImpl):
         """
-        Constructor que recibe las dependencias necesarias para ejecutar la inferencia.
-        
-        :param model_repository: Instancia que implementa ModelRepositoryPort.
-        :param notification: Instancia que implementa NotificationPort.
-        :param active_model: Modelo cargado que se usará para la inferencia.
+        :param model_repository: para inferir con el modelo activo.
+        :param notification_controller: para notificar resultados.
+        :param config_services: para listar y cambiar el modelo activo.
         """
-        self.model_repository = model_repository
-        self.notification = notification
-        self.active_model = active_model
+        self.repo = model_repository
+        self.notify = notification_controller
+        self.config = config_services
 
-    # Un core de paso no sirve de nada (hay que evitar eso)
-    def run_inference(self, frame: np.ndarray) -> DiagnosisResult: #InferenceLabel tiene el label en un formato enum. Pero por coherencia, nos conviene devolver el DiagnosisResult completo, ya que contiene la etiqueta, el frame y el timestamp.
-        """
-        Ejecuta la inferencia sobre el frame dado utilizando el modelo activo.
-      
-        :param frame: Datos del frame (por ejemplo, imagen o representación) a evaluar.
-        :return: Objeto DiagnosisResult con el resultado completo que contiene la etiqueta de la inferencia.
-        """
-        # Ejecuta la inferencia usando el modelo activo
-        result = self.model_repository.run_inference(self.active_model, frame) #ESTO ESTA BIEN XQ SIRVE COMO FILTRO DE INFORMACIÓN
-        
-        # Notifica el resultado obtenido
-        self.notification.notify_result(result)
-        
-        # Retorna el resultado de la inferencia
-        return result # Devuelve el DiagnosisResult completo
+    def get_models(self):
+        return self.config.get_models() # Listar modelos disponibles. Inyectado desde ConfigServicesImpl.
+
+    def set_model(self, model_id: str) -> bool:
+        return self.config.set_model(model_id) # Seteo el modelo. Inyectado desde ConfigServicesImpl.
+
+    def run_inference(self, frame: np.ndarray) -> DiagnosisResult:
+        result = self.repo.run_inference(frame)
+        self.notify.notify_result(result)
+        return result
+
+
+
+    

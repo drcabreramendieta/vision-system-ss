@@ -1,4 +1,6 @@
+
 from dataclasses import dataclass
+from typing import Optional, Any
 
 @dataclass
 class Model:
@@ -8,9 +10,5 @@ class Model:
     id: str
     name: str
     description: str
-
-# Atributos mínimos:
-#id: Identificador único del modelo.
-#name: Nombre descriptivo del modelo.
-#description: Breve descripción del modelo (por ejemplo, la arquitectura, entrenamiento, etc.).
-# Se usa el decorador @dataclass para simplificar la definición de las clases y generar automáticamente métodos como __init__ y __repr__.   
+    uri: Optional[str] = None             # Ruta al modelo (p.ej. en MLflow)
+    implementation: Optional[Any] = None  # Objeto de inferencia cargado (p.ej. pyfunc) 

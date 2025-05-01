@@ -13,24 +13,22 @@ class ModelRepositoryPort(ABC):
 
     @abstractmethod
     def get_models(self) -> List[Model]:
+        """Devuelve la lista de todos los modelos disponibles."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def load_model(self, model_id: str) -> bool:
         """
-        Devuelve la lista de todos los modelos disponibles.
+        Carga (activa) el modelo identificado por 'model_id' para futuras inferencias.
+        Retorna True si la carga fue exitosa.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def load_model(self, model_id: str) -> Model:
+    def run_inference(self, frame: np.ndarray) -> DiagnosisResult:
         """
-        Carga la información (pesos, configuración) del modelo
-        identificado por 'model_id'.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def run_inference(self, model: Model, frame: np.ndarray) -> DiagnosisResult: # Para ser más coherentes con la arquitectura hexagonal, es mejor devolver un DiagnosisResult (que contiene la etiqueta, timestamp y el frame) en lugar de solo la etiqueta. Esto hace que exista coherencia y al momento de notificar, no tengamos que pasarle el frame nuevamente al puerto de salida de notificación, sino que ya va todo empaquetado en el DiagnosisResult. Hablar con Diego
-        """
-        Ejecuta la inferencia con el 'model' especificado
-        y el frame suministrado, retornando un DiagnosisResult.
+        Ejecuta la inferencia usando el modelo activo sobre el 'frame' suministrado,
+        retornando un DiagnosisResult completo.
         """
         raise NotImplementedError
 
