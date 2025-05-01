@@ -11,13 +11,13 @@ class LocalVideoAdapter(StreamingControllerPort):
     Adapter basado en OpenCV que corre la lectura de frames en
     un hilo separado y reinicia al finalizar el video.
     """
-    def __init__(self, video_path: str):
+    def __init__(self, video_path: str): # AQUI CREAR UN DICCIONARIO DE HILOS DE LA SESION. actualmente solo se crea un hilo. Asociando una N cantidad de hilos a una sesion. Debería poder crear varios hilos 
         self.video_path = video_path
         self.cap: cv2.VideoCapture | None = None
         self._thread: threading.Thread | None = None
         self._stop_evt = threading.Event()
 
-    def open_stream(self, session_id: UUID, observer: Callable[[Frame], None]) -> bool:
+    def open_stream(self, session_id: UUID, observer: Callable[[Frame], None]) -> bool: #Hace falta un id del hilo. ESTE ADAPTADOR DE SALIDA QUE HAGA UN MAPEO DE LOS ID DE SESION A LOS HILOS QUE TIENE CORRIENDO
         if self._thread and self._thread.is_alive():
             # Ya hay un stream corriendo
             return False
@@ -48,4 +48,7 @@ class LocalVideoAdapter(StreamingControllerPort):
         if self._thread and self._thread.is_alive():
             self._stop_evt.set()
             self._thread.join(timeout=2.0)
-        return True
+            # debemos poner más lógica para asegurarnos de que el hilo se detuvo
+            if self._thread.is_alive():
+                raise RuntimeError(f"El hilo de video no se detuvo en el tiempo esperado")
+        return True # Este true asume que si se cumplió todo

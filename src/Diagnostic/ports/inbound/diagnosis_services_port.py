@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Diagnostic.domain import InferenceLabel
+from Diagnostic.domain.DiagnosisResult import DiagnosisResult
 import numpy as np
 
 class DiagnosisServicesPort(ABC):
@@ -8,7 +8,7 @@ class DiagnosisServicesPort(ABC):
     """
 
     @abstractmethod
-    def run_inference(self, frame: np.ndarray) -> InferenceLabel: # Se devuelve un objeto de tipo InferenceLabel
+    def run_inference(self, frame: np.ndarray) -> bool: # Se devuelve un objeto de tipo InferenceLabel
         """
         Ejecuta el proceso de inferencia sobre el 'frame' dado,
         retornando un objeto DiagnosisResult.

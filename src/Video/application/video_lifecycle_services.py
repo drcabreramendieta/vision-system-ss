@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Dict
+import uuid
 from uuid import UUID
 from Video.ports.inbound import VideoLifecyclePort
 from Video.ports.outbound import StreamingControllerPort
@@ -41,7 +42,7 @@ class VideoLifecycleServices(VideoLifecyclePort):
         return session.session_id
         
 
-    def stop_diagnostic(self, session_id: UUID) -> str:
+    def stop_diagnostic(self, session_id: UUID) -> str: #USAR EL MISMO NOMBRE DE LA CLASE. DEVOLVER UN ENUM DE VideoSessionStatus
         """
         Detiene la sesión, cerrando el stream y actualizando el estado.
         """
@@ -52,12 +53,13 @@ class VideoLifecycleServices(VideoLifecyclePort):
         session.stop_session()
         # Eliminamos del contenedor opcionalmente
         #self.sessions_container.remove_session(session_id)
-        return "stopped"
+        return "stopped" #Retornar el estado de la sesión como session.status.value (es un enum)
 
 
-    def get_session_status(self, session_id: str) -> str:
+    def get_session_status(self, session_id: UUID) -> str:  #Devolver un elemento class VideoSessionStatus defubudi en VideoSession.py
         """
         Retorna el estado actual de la sesión como cadena.
         """
         session = self.sessions_container.get_session(session_id)
-        return session.status.value if session else "NOT_FOUND"
+        return session.status.value if session else "NOT_FOUND"   #Ver bien que pasa si no existe la session
+        # Lanzar raise exception "no existe session"

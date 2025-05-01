@@ -17,6 +17,7 @@ async def start_diagnostic(
     Inicia una nueva sesión de diagnóstico de video y retorna su UUID.
     """
     try:
+        
         return video_lifecycle_services.start_diagnostic()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,6 +1,7 @@
 from __future__ import annotations  # Para que las anotaciones se conviertan en cadenas
 from typing import TYPE_CHECKING
-from uuid import UUID # Para generar un UUID único. Ajuste realizado para que sea UUID en lugar de uuid4() para evitar la creación de un nuevo UUID cada vez que se crea una sesión. NO SE SI ESTO ES LO QUE QUEREMOS
+import uuid 
+from uuid import UUID
 import datetime
 from enum import Enum, auto
 from datetime import datetime
@@ -15,9 +16,9 @@ if TYPE_CHECKING: # Para evitar importaciones circulares
 
 # Definición del enumerado para los estados de la sesión
 class VideoSessionStatus(Enum):
-    CREATED = auto()
-    IN_PROGRESS = auto()
-    STOPPED = auto()
+    CREATED = "Created"
+    IN_PROGRESS = "In_progress"
+    STOPPED = "Stopped"
 
 
 class VideoSession: #
@@ -34,7 +35,7 @@ class VideoSession: #
         :param streaming_controller: Instancia del puerto de salida para el control del streaming.
         :param notification_controller: Instancia del puerto de salida para notificar al módulo de diagnóstico.
         """
-        self.session_id = UUID  # Genera automáticamente un identificador único para la sesión. 
+        self.session_id = uuid.uuid4()  # Genera automáticamente un identificador único para la sesión. 
         self.status = VideoSessionStatus.CREATED # Estado inicial de la sesión.
         self.start_time = start_time
         self.end_time = None
@@ -49,6 +50,8 @@ class VideoSession: #
         """
         # Se abre el stream, pasando el session_id y la función callback _on_frame_received.
         # Nos registramos el observador del stream de esta sesion
+        # DEBERIAMOS RETORNAR UN IDENTIFICADOR DEL HILO STREAMING
+        # HAY QUE RESTRINGIR QUE SEA 1 STREAM POR SESION
         if self.streaming_controller.open_stream(self.session_id,self._frame_observer): #Nos registramos como observadores del stream
             self.status = VideoSessionStatus.IN_PROGRESS # Se actualiza el estado de la sesión a IN_PROGRESS.
         else:
@@ -63,7 +66,7 @@ class VideoSession: #
         """
         # Aquí se puede agregar lógica adicional para procesar el frame antes de enviarlo.
         self.notification_controller.notify(session_id=self.session_id, frame=frame) #Se envía el frame al módulo de diagnóstico
-        print('frame_id',frame.timestamp) 
+        # print('frame_id',frame.timestamp) 
     
     def stop_session(self) -> None:
         """
