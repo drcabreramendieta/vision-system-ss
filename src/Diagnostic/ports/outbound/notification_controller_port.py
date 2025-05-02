@@ -8,7 +8,7 @@ class NotificationControllerPort(ABC):
     """
 
     @abstractmethod
-    def notify_result(self, result: DiagnosisResult) -> bool:
+    def notify_result(self, session_id: str, result: DiagnosisResult) -> bool:
         """
         Envía el resultado (label, frame, timestamp) al componente
         que corresponda (por ejemplo, un Módulo de Reporte).

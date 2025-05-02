@@ -10,7 +10,7 @@ class DiagnosticContainer(containers.DeclarativeContainer):
     """Contenedor de DI para módulo Diagnostic."""
 
 
-    # 0) Configuración de inyección de dependencias
+#   0) Configuración de inyección de dependencias
     # Se especifica el módulo donde se encuentran los adaptadores FastAPI
     wiring_config = containers.WiringConfiguration(
         modules=[
@@ -18,36 +18,33 @@ class DiagnosticContainer(containers.DeclarativeContainer):
         ]
     )
 
-    # 1) Carga desde config.yml
-    config = providers.Configuration(yaml_files=['config.yml'])
+#   1) Carga desde config.yml
+    config = providers.Configuration(yaml_files=['config.yaml'])
 
-    # 2) Adaptador para Report Module (se inyecta al crear instancia)
-    report_services = providers.Dependency(instance_of=ReportServicesPort)
+#   2) Repositorio MLflow, recibe la URI y el nombre de modelo desde config
+    model_repository = providers.Singleton(
+        MlflowModelRepositoryAdapter,
+        tracking_uri=config.Diagnostic.mlflowuri,
+    )
 
-    # 3) Configuración de servicios (ModelRegistry)
+    # 3) Servicio de configuración (puerto inbound), que delega en el repo
     config_services = providers.Singleton(
         ConfigServicesImpl,
-        model_repository=providers.Dependency()    # Esto tiene que ir así? lo inyecta automáticamente más adelante? o borramos la línea?
+        model_repository=model_repository,
     )
 
-    # 4) Repositorio de modelos MLflow
-    model_repository = providers.Singleton(   #Está bien que sea singleton? Antes pusimos factory
-        # No es necesario que sea singleton, pero se recomienda para evitar múltiples conexiones a la misma base de datos
-        MlflowModelRepositoryAdapter,
-        config_services=config_services  
-        # Aquí debería ir algo como config.Diagnostic.model_registry.uri? algo así? o es el config_services?
-    )
+    # 4) Adaptador para enviar resultados al módulo Report
+    report_services = providers.Dependency(instance_of=ReportServicesPort)
 
-    # 5) Notificador de resultados al Report Module
-    notification_controller = providers.Singleton( # Está bien que sea singleton? Antes pusimos factory
+    notification_controller = providers.Singleton(
         DiagnosisNotificationControllerAdapter,
-        report_services=report_services
+        report_services=report_services,
     )
 
-    # 6) Servicio principal
+    # 5) Servicio principal de diagnóstico
     diagnosis_services = providers.Singleton(
         DiagnosisServicesImpl,
         model_repository=model_repository,
         notification_controller=notification_controller,
-        config_services=config_services
+        config_services=config_services,
     )

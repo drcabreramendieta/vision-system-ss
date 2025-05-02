@@ -1,47 +1,103 @@
 # src/Diagnostic/adapters/outbound/mlflow_model_repository_adapter.py
-import mlflow, mlflow.pyfunc
+
+import mlflow
+import mlflow.pyfunc
+from typing import List
+import numpy as np
+import pandas as pd
+from datetime import datetime
+
 from Diagnostic.ports.outbound.model_repository_port import ModelRepositoryPort
 from Diagnostic.domain.Model import Model
 from Diagnostic.domain.DiagnosisResult import DiagnosisResult
 from Diagnostic.domain.InferenceLabel import InferenceLabel
-from datetime import datetime
-import numpy as np
 
 class MlflowModelRepositoryAdapter(ModelRepositoryPort):
-    def __init__(self, config_services):
-        mlflow_config = config_services.get_mlflow_config()
-        mlflow.set_tracking_uri(mlflow_config.tracking_uri)
-        self.model_name = mlflow_config.model_name
+    def __init__(self, tracking_uri: str):
+        print(f"[MLFLOW ADAPTER] __init__ recibe tracking_uri = {tracking_uri!r}")
+        mlflow.set_tracking_uri(tracking_uri)
+        print(f"[MLFLOW ADAPTER] mlflow.get_tracking_uri() → {mlflow.get_tracking_uri()!r}")
         self.client = mlflow.tracking.MlflowClient()
         self._active_pyfunc = None
+        self._active_model_name = None
+        self._active_model_version = None
 
-    def get_models(self):
-        registered = self.client.get_registered_model(self.model_name)
-        versions = registered.latest_versions or []
+    def get_models(self) -> List[Model]:
+        """
+        Lista TODOS los modelos registrados en MLflow (no filtra versiones).
+        """
+        registered_models = self.client.search_registered_models()
         return [
             Model(
-                id=ver.version,
-                name=self.model_name,
-                description=f"v{ver.version}",
-                uri=ver.source
+                id=rm.name,
+                name=rm.name,
+                description=rm.description or "",
+                uri=None,
+                implementation=None
             )
-            for ver in versions
+            for rm in registered_models
         ]
 
     def load_model(self, model_id: str) -> bool:
-        uri = f"models:/{self.model_name}/{model_id}"
+        """
+        Activa (carga) la última versión del modelo cuyo nombre es `model_id`.
+        En esta variante imprimimos el traceback si algo falla.
+        """
         try:
+            rm = self.client.get_registered_model(model_id)
+            versions = rm.latest_versions or []
+            if not versions:
+                print(f"[MLFLOW ADAPTER] No hay versiones para el modelo '{model_id}'")
+                return False
+
+            # Elegimos la de mayor número
+            latest = sorted(versions, key=lambda v: int(v.version), reverse=True)[0]
+            uri = f"models:/{latest.name}/{latest.version}"
+            print(f"[MLFLOW ADAPTER] Cargando modelo desde URI: {uri}")
+
+            # Aquí puede saltar la excepción
             self._active_pyfunc = mlflow.pyfunc.load_model(uri)
+            print(f"[MLFLOW ADAPTER] Modelo cargado correctamente: {latest.name} v{latest.version}")
             return True
-        except Exception:
-            return False
+
+        except Exception as e:
+            import traceback; traceback.print_exc()
+            # Para que FastAPI muestre 500 con el detalle:
+            raise RuntimeError(f"Falló al cargar modelo '{model_id}' desde MLflow: {e}")
 
     def run_inference(self, frame: np.ndarray) -> DiagnosisResult:
-        # Preprocesado mínimo: adaptamos el numpy
-        input_df = frame[np.newaxis, ...]
-        pred = self._active_pyfunc.predict(input_df)
-        label = InferenceLabel(int(pred))  
-        return DiagnosisResult(frame=frame,
-                               label=label,
-                               timestamp=datetime.now(),
-                               session_id=None)
+        """
+        Ejecuta inferencia con el modelo cargado.
+        """
+        if self._active_pyfunc is None:
+            raise RuntimeError("No hay modelo cargado. Llama antes a load_model().")
+
+        # el batch axis lo añades aquí
+        batch = frame[np.newaxis, ...]  # shape (1, C, H, W)
+
+        raw_pred = self._active_pyfunc.predict(batch)
+
+        # 1) Extrae array de raw_pred
+        if isinstance(raw_pred, dict):
+            # p.ej. {'output': array([[0.1, 0.7, 0.2, …]])}
+            arr = list(raw_pred.values())[0]
+        elif isinstance(raw_pred, pd.DataFrame):
+            arr = raw_pred.values
+        else:
+            arr = raw_pred
+
+        # 2) Asegúrate de que es un NumPy array
+        arr = np.asarray(arr)  # debería ser shape (1, n_classes)
+
+        # 3) Toma la primera fila y haz argmax
+        scores = arr[0]               # shape (n_classes,)
+        label_idx = int(np.argmax(scores))
+
+        # 4) Ahora sí es un índice válido entre 0 y 9
+        label = InferenceLabel(label_idx)
+
+        return DiagnosisResult(
+            label=label,
+            frame=frame,
+            timestamp=datetime.now()
+        )

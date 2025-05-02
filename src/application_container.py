@@ -5,7 +5,7 @@ from dependency_injector import containers, providers
 from Video import VideoContainer
 from unittest.mock import MagicMock
 from Diagnostic.ports.inbound import DiagnosisServicesPort
-#from Diagnostic.diagnostic_container import DiagnosticContainer
+from Diagnostic.diagnostic_container import DiagnosticContainer
 from Report.ports.inbound import ReportServicesPort
 from Report.report_container import ReportContainer
 
@@ -24,14 +24,14 @@ class ApplicationContainer(containers.DeclarativeContainer):
     #    ReportContainer,
     #)
 
-    #diagnostic = providers.Container(
-    #    DiagnosticContainer,
-    #    report_services= mock_report # report.report_services,  # Inyectar el servicio de Report
-    #)
+    diagnostic = providers.Container(
+        DiagnosticContainer,
+        report_services= mock_report # report.report_services,  # Inyectar el servicio de Report
+    )
 
     video = providers.Container(
         VideoContainer,
-        diagnosis_services= mock_diagnosis #diagnostic.diagnosis_services,  # Inyectar el servicio de diagnóstico
+        diagnosis_services= diagnostic.diagnosis_services,  # Inyectar el servicio de diagnóstico
     )
 
 # Las APIs de cada módulo sería parecido como los de video 

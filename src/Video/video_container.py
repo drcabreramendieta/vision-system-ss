@@ -4,7 +4,8 @@ from Video.domain import Sessions
 from Video.application import VideoLifecycleServices
 
 class VideoContainer(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(modules=["Video.adapters.inbound.fastapi_video_services_adapter"])
+    wiring_config = containers.WiringConfiguration(modules=["Video.adapters.inbound.fastapi_video_services_adapter",
+                                                            "Diagnostic.adapters.inbound.fastapi_diagnostic_services_adapter",])
     config = providers.Configuration(yaml_files=["config.yaml"])
     diagnosis_services = providers.Dependency()
 

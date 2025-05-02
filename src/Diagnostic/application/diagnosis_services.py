@@ -37,9 +37,9 @@ class DiagnosisServicesImpl(DiagnosisServicesPort):
     def set_model(self, model_id: str) -> bool:
         return self.config.set_model(model_id) # Seteo el modelo. Inyectado desde ConfigServicesImpl.
 
-    def run_inference(self, frame: np.ndarray) -> DiagnosisResult:
+    def run_inference(self, frame: np.ndarray, session_id: str) -> DiagnosisResult: # Modificamos para que al run_inference se le pase el session_id. El paquete DiagnosisResult no tiene el session_id y no queremos integrarlo ahí para mantener más limpio la clase y los servicios de diagnóstico
         result = self.repo.run_inference(frame)
-        self.notify.notify_result(result)
+        self.notify.notify_result(session_id, result)
         return result
 
 

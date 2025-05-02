@@ -44,3 +44,4 @@ class ConfigServicesImpl(ConfigServicesPort):
         # load_model busca dentro de la lista de modelos y le dice al repositorio que cargue o active el modelo
         # Cuando se implemente el adaptador del repositorio de modelos, allí hay instrucciones para cargar el modelo con MLflow
         # Implementar los adaptadores de salida 
+        return loaded_model # Esto estaba faltando, ahora devuelve el modelo cargado 02/05/2025
