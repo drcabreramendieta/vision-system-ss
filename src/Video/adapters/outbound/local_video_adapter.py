@@ -32,8 +32,17 @@ class LocalVideoAdapter(StreamingControllerPort):
                     # fin del video: reiniciar
                     self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                     continue
-                frame_id = f"{session_id}_{int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))}"
-                frame = Frame(frame_id, np.array(frame_data), datetime.now())
+                #frame_id = f"{session_id}_{int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))}"
+                #frame = Frame(frame_id, np.array(frame_data), datetime.now()) # Antes estaba así
+
+                frame_no = int(self.cap.get(cv2.CAP_PROP_POS_FRAMES))
+                frame = Frame(
+                session_id=session_id,      # viene del open_stream(...)
+                frame_id=frame_no,
+                data=np.array(frame_data),
+                timestamp=datetime.now()
+                )
+                # notificar al observador
                 observer(frame)
             # al salir libera recursos
             self.cap.release()

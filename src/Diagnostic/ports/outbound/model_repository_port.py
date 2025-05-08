@@ -25,10 +25,10 @@ class ModelRepositoryPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def run_inference(self, frame: np.ndarray) -> DiagnosisResult:
+    def run_inference(self, frame: np.ndarray, session_id: str) -> DiagnosisResult:
         """
-        Ejecuta la inferencia usando el modelo activo sobre el 'frame' suministrado,
-        retornando un DiagnosisResult completo.
+        Ejecuta inferencia y devuelve un DiagnosisResult
+        con session_id incluido.
         """
         raise NotImplementedError
 

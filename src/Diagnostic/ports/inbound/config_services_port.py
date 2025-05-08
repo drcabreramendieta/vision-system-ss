@@ -13,6 +13,11 @@ class ConfigServicesPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def has_model(self) -> bool:
+        """Devuelve True si ya se cargó/un modelo está activo."""
+        raise NotImplementedError
+
+    @abstractmethod
     def set_model(self, model_id: str) -> bool:
         """
         Recibe el identificador del modelo a establecer como activo.

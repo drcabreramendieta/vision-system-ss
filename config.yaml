@@ -16,3 +16,6 @@ Diagnostic:
   #--serve-artifacts \
   #--host 0.0.0.0 \
   #--port 5000
+
+# Ejecutar en terminal el servidor de mlflow así:
+# mlflow server   --backend-store-uri sqlite:///mlflow.db   --default-artifact-root file:///home/jeancarlo/vision_system/vision-system-ss/mlruns   --serve-artifacts   --host 0.0.0.0   --port 5000

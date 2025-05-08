@@ -65,14 +65,14 @@ class MlflowModelRepositoryAdapter(ModelRepositoryPort):
             # Para que FastAPI muestre 500 con el detalle:
             raise RuntimeError(f"Falló al cargar modelo '{model_id}' desde MLflow: {e}")
 
-    def run_inference(self, frame: np.ndarray) -> DiagnosisResult:
+    def run_inference(self, frame: np.ndarray, session_id: str) -> DiagnosisResult:
         """
         Ejecuta inferencia con el modelo cargado.
         """
         if self._active_pyfunc is None:
             raise RuntimeError("No hay modelo cargado. Llama antes a load_model().")
 
-        # el batch axis lo añades aquí
+        # el batch axis se lo añade aquí
         batch = frame[np.newaxis, ...]  # shape (1, C, H, W)
 
         raw_pred = self._active_pyfunc.predict(batch)
@@ -86,8 +86,8 @@ class MlflowModelRepositoryAdapter(ModelRepositoryPort):
         else:
             arr = raw_pred
 
-        # 2) Asegúrate de que es un NumPy array
-        arr = np.asarray(arr)  # debería ser shape (1, n_classes)
+        # 2) Nos aseguramos un NumPy array
+        arr = np.asarray(arr)  #  shape (1, num_classes)
 
         # 3) Toma la primera fila y haz argmax
         scores = arr[0]               # shape (n_classes,)
@@ -97,6 +97,7 @@ class MlflowModelRepositoryAdapter(ModelRepositoryPort):
         label = InferenceLabel(label_idx)
 
         return DiagnosisResult(
+            session_id=session_id,      # <-- aquí incluimos el session_id
             label=label,
             frame=frame,
             timestamp=datetime.now()

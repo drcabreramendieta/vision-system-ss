@@ -12,11 +12,16 @@ class DiagnosticContainer(containers.DeclarativeContainer):
 
 #   0) Configuración de inyección de dependencias
     # Se especifica el módulo donde se encuentran los adaptadores FastAPI
-    wiring_config = containers.WiringConfiguration(
-        modules=[
-            "Diagnostic.adapters.inbound.fastapi_diagnostic_services_adapter"
-        ]
-    )
+    # Esto comentamos para Centralizar el contenedor raíz. De este modo, no se estará usando dos instancias distintas del servicio de diagnóstico:
+
+    #Una instancia de DiagnosisServicesImpl para atender los endpoints de /diagnosis.
+    #Otra distinta de DiagnosisServicesImpl para atender /video/start.
+    #wiring_config = containers.WiringConfiguration(
+    #    modules=[
+    #        
+    #        "Diagnostic.adapters.inbound.fastapi_diagnostic_services_adapter"
+    #    ]
+    #)
 
 #   1) Carga desde config.yml
     config = providers.Configuration(yaml_files=['config.yaml'])

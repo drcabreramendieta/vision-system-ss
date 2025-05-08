@@ -12,7 +12,7 @@ from Report.report_container import ReportContainer
 class ApplicationContainer(containers.DeclarativeContainer):
     
     # Puesto por Diego para poder testear el contenedor de video?
-    mock_diagnosis = MagicMock(DiagnosisServicesPort)
+
     mock_report = MagicMock(ReportServicesPort)
     #video_container = providers.Container(
     #    VideoContainer,

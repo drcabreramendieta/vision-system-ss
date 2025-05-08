@@ -62,11 +62,14 @@ class VideoSession: #
         Callback interno que se invoca cada vez que se recibe un frame.
         Llama al puerto de salida para notificar el frame al módulo de diagnóstico.
 
-        :param frame: Objeto que representa el frame recibido.
+        :param frame: Objeto que representa el frame recibido y contiene la session id.
         """
         # Aquí se puede agregar lógica adicional para procesar el frame antes de enviarlo.
-        self.notification_controller.notify(session_id=self.session_id, frame=frame) #Se envía el frame al módulo de diagnóstico
-        # print('frame_id',frame.timestamp) 
+        try:
+            self.notification_controller.notify(session_id=self.session_id, frame=frame) #Se envía el frame al módulo de diagnóstico
+        except Exception as e:
+            # loguea, pero no rompas el hilo
+            print(f"[VideoSession {self.session_id}] error en notify: {e}")
     
     def stop_session(self) -> None:
         """

@@ -3,19 +3,20 @@ from fastapi import APIRouter, HTTPException, UploadFile, Depends, Query
 from dependency_injector.wiring import inject, Provide
 from Diagnostic.ports.inbound.diagnosis_services_port import DiagnosisServicesPort
 from Diagnostic.ports.outbound.notification_controller_port import NotificationControllerPort
-from Diagnostic import DiagnosticContainer
+#from Diagnostic import DiagnosticContainer
 from Diagnostic.domain.DiagnosisResult import DiagnosisResult
 import numpy as np
 from PIL import Image
 from typing import List
 from Diagnostic.domain.Model import Model
+from application_container import ApplicationContainer
 
 router = APIRouter(prefix="/diagnosis", tags=["diagnosis"])
 
 @router.get("/models")
 @inject
 def list_models(
-    svc: DiagnosisServicesPort = Depends(Provide[DiagnosticContainer.diagnosis_services])
+    svc: DiagnosisServicesPort = Depends(Provide[ApplicationContainer.diagnostic.diagnosis_services]) #Antes estaba así: Depends(Provide[DiagnosticContainer.diagnosis_services])
 ):
     return [{"id": m.id, "name": m.name, "description": m.description}
             for m in svc.get_models()]
@@ -24,23 +25,24 @@ def list_models(
 @inject
 def select_model(
     model_id: str,
-    svc: DiagnosisServicesPort = Depends(Provide[DiagnosticContainer.diagnosis_services])
-):
+    svc: DiagnosisServicesPort = Depends(Provide[ApplicationContainer.diagnostic.diagnosis_services])
+):  
     ok = svc.set_model(model_id)
     if not ok:
         raise HTTPException(status_code=404, detail="Model not found or failed to load")
+    print("🟢 Modelo cargado en instancia:", id(svc), "active_model:", svc.config.active_model)
     return {"status": "model set", "model_id": model_id}
 
 @router.post("/run")
 @inject
 def run_diagnosis(
     file: UploadFile,
-    session_id: str = Query(..., description="ID de la sesión de vídeo"),
-    svc: DiagnosisServicesPort = Depends(Provide[DiagnosticContainer.diagnosis_services])
+    session_id: str = Query(..., description="UUID de la sesión de vídeo"),
+    svc: DiagnosisServicesPort = Depends(Provide[ApplicationContainer.diagnostic.diagnosis_services])
 ):
         
     """
-    Recibe una imagen con el frame; devuelve el DiagnosisResult.
+    Recibe una imagen con el frame; devuelve el DiagnosisResult (que incluye el session_id).
     """
     # 1) Abrir y forzar RGB
     img = Image.open(file.file).convert("RGB")
@@ -60,6 +62,7 @@ def run_diagnosis(
     result = svc.run_inference(arr, session_id)
 
     return {
+        "session_id": result.session_id,
         "label": result.label.name,
         "timestamp": result.timestamp.isoformat()
     }

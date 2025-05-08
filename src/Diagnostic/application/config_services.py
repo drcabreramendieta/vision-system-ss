@@ -45,3 +45,8 @@ class ConfigServicesImpl(ConfigServicesPort):
         # Cuando se implemente el adaptador del repositorio de modelos, allí hay instrucciones para cargar el modelo con MLflow
         # Implementar los adaptadores de salida 
         return loaded_model # Esto estaba faltando, ahora devuelve el modelo cargado 02/05/2025
+    
+    def has_model(self) -> bool:
+        # Devuelve True si ya cargaste un modelo
+        return self.active_model is not None
+
