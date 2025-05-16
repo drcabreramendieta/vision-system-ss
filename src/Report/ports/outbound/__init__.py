@@ -1,4 +1,4 @@
-from .diagnosis_registry_port import DiagnosisRegistryPort
-from .notification_controller_port import NotificationControllerPort
+from .report_storage_port import ReportStoragePort
+from .report_notification_controller_port import ReportNotificationPort
 
-__all__ = ["DiagnosisRegistryPort", "NotificationControllerPort"]  # Volvemos visibles las implementaciones de los puertos de salida
+__all__ = ["ReportStoragePort", "ReportNotificationPort"]  # Volvemos visibles las implementaciones de los puertos de salida

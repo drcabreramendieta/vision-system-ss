@@ -1,4 +1,4 @@
-from .diagnosis_registry_adapter import DiagnosisRegistryAdapter
-from .notification_controller_adapter import NotificationControllerAdapter
+from .sqlite_report_storage_adapter import SqliteReportStorageAdapter
+from .websocket_notification_adapter import WebSocketNotificationAdapter
 
-__all__ = ["DiagnosisRegistryAdapter", "NotificationControllerAdapter"]  # Volvemos visible la implementación del puerto de salida
+__all__ = ["SqliteReportStorageAdapter", "WebSocketNotificationAdapter"]  # Volvemos visible la implementación del puerto de salida

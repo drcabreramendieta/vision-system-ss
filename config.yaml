@@ -2,11 +2,16 @@
 
 video:
 
-  video_path: /mnt/c/Users/UPS/Desktop/Proyecto Sewer-Seer/Desarrollo del Proyecto/Procesamiento de Imágenes/Videos_testbed/F0_C1_D1/_video_F0_C1_D_0.mp4
+  video_path: /mnt/c/Users/UPS/Desktop/Proyecto Sewer-Seer/Desarrollo del Proyecto/Procesamiento de Imágenes/Videos_testbed/F9_C1_D1/_video_F9_C1_D1_0.mp4
 
 
 Diagnostic:
   mlflowuri:  http://localhost:5000
+
+report:
+  frames_dir: "/mnt/c/Users/UPS/Desktop/Proyecto Sewer-Seer/Desarrollo del Proyecto/Procesamiento de Imágenes/Video_Sessions/frames"
+  db_url: "sqlite:////mnt/c/Users/UPS/Desktop/Proyecto Sewer-Seer/Desarrollo del Proyecto/Procesamiento de Imágenes/Video_Sessions/report.db"
+
 
   # /home/jeancarlo/vision_system/vision-system-ss/mlruns
 

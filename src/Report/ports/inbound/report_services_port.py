@@ -1,25 +1,47 @@
+# src/Report/ports/inbound/report_services_port.py
 from abc import ABC, abstractmethod
+from typing import List, Optional
+from uuid import UUID
+from Report.domain.ReportEntry import ReportEntry
+from Report.domain.SessionSummary import SessionSummary
 from datetime import datetime
+import numpy as np
 
 class ReportServicesPort(ABC):
-    """
-    Expone los servicios para gestionar reportes:
-      - add_result: Almacena un frame (ReportEntry) asociado a un cambio de estado.
-      - generate_summary: Retorna un resumen de la sesión en formato string.
-    """
-
+    
     @abstractmethod
-    def add_result(self, session_id: str, frame, label: str, timestamp: datetime) -> None: #Esto se debe conectar con la clase DiagnosisResults del modulo de Diagnostico?
+    def add_result(self,
+                   session_id: str,
+                   frame: np.ndarray,
+                   label: str,
+                   timestamp: datetime) -> None:
         """
-        Almacena un nuevo 'ReportEntry' asociado a la sesión, normalmente
-        cuando se detecta un cambio de estado y se quiere guardar el frame.
+        Procesa un resultado de inferencia:
+          - Guarda el frame en disco
+          - Persiste metadatos en BD
+          - Notifica por WebSocket
         """
         raise NotImplementedError
 
     @abstractmethod
-    def generate_summary(self, session_id: str) -> str:
+    def list_sessions(self) -> List[UUID]:
+        """Devuelve todos los session_id registrados."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_entries(self, session_id: UUID) -> List[ReportEntry]:
+        """Devuelve lista de entradas de una sesión."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_summary(self, session_id: UUID,
+                    operator: str, location: str,
+                    job_order: Optional[str]=None
+                   ) -> SessionSummary:
         """
-        Devuelve un resumen (texto) de la sesión dada.
+        Genera estadísticas y produce SessionSummary.
+        Metadatos: operador, ubicación, orden de trabajo.
         """
         raise NotImplementedError
+
 

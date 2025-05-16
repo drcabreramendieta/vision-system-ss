@@ -5,7 +5,7 @@ from Diagnostic.domain.DiagnosisResult import DiagnosisResult
 class DiagnosisNotificationControllerAdapter(NotificationControllerPort):
     """
     Envía cada DiagnosisResult al módulo de Report,
-    usando el puerto inbound ReportServicesPort.
+    creando un ReportEntry que se persiste y notifica.
     """
     def __init__(self, report_services: ReportServicesPort):
         self._report_services = report_services

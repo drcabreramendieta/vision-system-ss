@@ -13,20 +13,20 @@ class ApplicationContainer(containers.DeclarativeContainer):
     
     # Puesto por Diego para poder testear el contenedor de video?
 
-    mock_report = MagicMock(ReportServicesPort)
+    #mock_report = MagicMock(ReportServicesPort)
     #video_container = providers.Container(
     #    VideoContainer,
     #    diagnosis_services=mock_diagnosis
     #    )
 
     # Subcontenedores
-    #report = providers.Container(    # Este no tiene dependencias
-    #    ReportContainer,
-    #)
+    report = providers.Container(    # Este no tiene dependencias
+        ReportContainer,
+    )
 
     diagnostic = providers.Container(
         DiagnosticContainer,
-        report_services= mock_report # report.report_services,  # Inyectar el servicio de Report
+        report_services= report.report_services,  # Inyectar el servicio de Report
     )
 
     video = providers.Container(

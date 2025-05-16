@@ -72,11 +72,18 @@ class MlflowModelRepositoryAdapter(ModelRepositoryPort):
         if self._active_pyfunc is None:
             raise RuntimeError("No hay modelo cargado. Llama antes a load_model().")
 
+
+        #print(f"[MLFLOW ADAPTER] run_inference recibe frame.shape={frame.shape} session_id={session_id}")
+        #print(f"[MLFLOW ADAPTER] frame={frame}")
+
         # el batch axis se lo añade aquí
-        batch = frame[np.newaxis, ...]  # shape (1, C, H, W)
+        batch = frame[np.newaxis, ...]  # shape (1, C, H, W) Agregamos un batch axis
+        #print(f"[MLFLOW ADAPTER] batch.shape={batch.shape} batch={batch}")
+
 
         raw_pred = self._active_pyfunc.predict(batch)
-
+        #print(f"[MLFLOW ADAPTER] raw_pred={raw_pred}")
+        #print(f"[MLFLOW ADAPTER] type(raw_pred)={type(raw_pred)}")
         # 1) Extrae array de raw_pred
         if isinstance(raw_pred, dict):
             # p.ej. {'output': array([[0.1, 0.7, 0.2, …]])}
@@ -85,14 +92,14 @@ class MlflowModelRepositoryAdapter(ModelRepositoryPort):
             arr = raw_pred.values
         else:
             arr = raw_pred
-
+        
         # 2) Nos aseguramos un NumPy array
         arr = np.asarray(arr)  #  shape (1, num_classes)
 
         # 3) Toma la primera fila y haz argmax
         scores = arr[0]               # shape (n_classes,)
         label_idx = int(np.argmax(scores))
-
+        #print(f"[MLFLOW ADAPTER] scores={scores} label_idx={label_idx}")
         # 4) Ahora sí es un índice válido entre 0 y 9
         label = InferenceLabel(label_idx)
 
