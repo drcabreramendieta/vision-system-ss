@@ -5,7 +5,7 @@ from Video.ports.outbound.notification_controller_port import NotificationContro
 from Diagnostic.ports.inbound.diagnosis_services_port import DiagnosisServicesPort
 
 # tamaño de entrada del modelo (lectura estática o config)
-TARGET_SHAPE = (288, 352)  # (ancho, alto)
+TARGET_SHAPE = (352, 288)  # (ancho, alto)
 
 class DiagnosticNotificationControllerAdapter(NotificationControllerPort):
     def __init__(self, diagnosis_services: DiagnosisServicesPort):
@@ -22,7 +22,10 @@ class DiagnosticNotificationControllerAdapter(NotificationControllerPort):
         img = img.resize(TARGET_SHAPE, Image.BILINEAR)
 
         # 3) Pasar a np.array y reordenar ejes
-        arr = np.array(img).transpose(2, 0, 1).astype(np.float32)
+        # arr = np.array(img).transpose(2, 0, 1).astype(np.float32) Así estaba antes, pero no es correcto
+        arr = np.array(img).astype(np.float32)            # (H, W, C) = (288, 352, 3). PIL → numpy siempre da (alto, ancho, canales)
+        arr = arr.transpose(2, 1, 0) 
+        arr = arr / 255.0 # Normalizar a [0, 1] si es necesario. Esto debido a que en el entrenamiento se usaba ToTensor(). Debe tener (C, H, W)
         
         # 4) Ejecutar  inferencia y capturar resultado. le pasamos ambos al servicio de diagnóstico
         result = self.diagnosis_services.run_inference(arr, str(session_id)) # Hacemos str(session_id) porque el servicio de diagnóstico espera un string

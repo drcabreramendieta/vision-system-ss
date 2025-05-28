@@ -49,12 +49,12 @@ def run_diagnosis(
 
     # 2) Redimensionar al tamaño que vio tu modelo (ancho, alto)
     #    (tu modelo se entrenó con H=352, W=288)
-    img = img.resize((288, 352), resample=Image.BILINEAR)
+    img = img.resize((352,288), resample=Image.BILINEAR)
 
     # 3) Pasar a array NumPy y reordenar ejes a CxHxW
     arr = np.array(img)                   # shape (352, 288, 3)
-    arr = arr.transpose(2, 0, 1)          # shape (3, 352, 288)
-
+    arr = arr.transpose(2, 1, 0)          # shape (3, 352, 288)
+    arr = arr / 255.0
     # 4) Asegurar tipo float32 (firma de MLflow)
     arr = arr.astype(np.float32)
 

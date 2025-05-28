@@ -5,7 +5,7 @@ from uuid import UUID
 from Video.ports.inbound import VideoLifecyclePort
 from Video.ports.outbound import StreamingControllerPort
 from Video.ports.outbound import NotificationControllerPort
-from Video.domain import VideoSession, VideoSessionStatus
+from Video.domain import VideoSession
 from Video.domain import Sessions
 
 class VideoLifecycleServices(VideoLifecyclePort):
