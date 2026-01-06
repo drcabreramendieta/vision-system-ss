@@ -1,8 +1,8 @@
 # src/Video/adapters/outbound/diagnostic_notification_controller_adapter.py
 from PIL import Image
 import numpy as np
-from Video.ports.outbound.notification_controller_port import NotificationControllerPort
-from Diagnostic.ports.inbound.diagnosis_services_port import DiagnosisServicesPort
+from Video.ports.outbound import NotificationControllerPort
+from Diagnostic.ports.inbound import DiagnosisServicesPort
 
 # tamaño de entrada del modelo (lectura estática o config)
 TARGET_SHAPE = (352, 288)  # (ancho, alto)

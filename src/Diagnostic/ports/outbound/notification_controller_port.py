@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from Diagnostic.domain.DiagnosisResult import DiagnosisResult
+from Diagnostic.domain import DiagnosisResult
 
 class NotificationControllerPort(ABC):
     """

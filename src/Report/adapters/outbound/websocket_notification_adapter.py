@@ -2,10 +2,10 @@
 import asyncio
 from fastapi import WebSocket
 from collections import defaultdict
-from Report.domain.ReportEntry import ReportEntry
-from Report.domain.SessionSummary import SessionSummary
-from Report.ports.outbound.report_notification_controller_port import ReportNotificationPort
-from Report.adapters.inbound.ws_pool import connected
+from Report.domain import ReportEntry
+from Report.domain import SessionSummary
+from Report.ports.outbound import ReportNotificationPort
+from Report.adapters.inbound import connected
 import json
 
 class WebSocketNotificationAdapter(ReportNotificationPort):

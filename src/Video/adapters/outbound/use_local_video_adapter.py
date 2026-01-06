@@ -1,5 +1,6 @@
-from Video.adapters.outbound.local_video_adapter import LocalVideoAdapter
-from Video.domain.Frame import Frame
+from uuid import uuid4
+from Video.adapters.outbound import LocalVideoAdapter
+from Video.domain import Frame
 
 # Instanciar el adaptador con la ruta del video
 adapter = LocalVideoAdapter("/mnt/c/Users/UPS/Desktop/Proyecto Sewer-Seer/Desarrollo del Proyecto/Procesamiento de Imágenes/Videos_testbed/F0_C1_D1/_video_F0_C1_D_0.mp4")
@@ -10,7 +11,7 @@ def process_frame(frame: Frame):
 
 # Iniciar el stream de video (se espera que procese todos los frames y luego cierre el stream)
 try:
-    success = adapter.open_stream("session_dummy", process_frame)
+    success = adapter.open_stream(uuid4(), process_frame)
     if success:
         print("Stream procesado correctamente.")
 except Exception as e:

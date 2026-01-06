@@ -1,9 +1,10 @@
 from typing import Callable
 from uuid import UUID
-from Video.domain.Frame import Frame
+from Video.domain import Frame
 from Video.application import VideoLifecycleServices
 from Video.ports.outbound import StreamingControllerPort
 from Video.ports.outbound import NotificationControllerPort
+from Video.adapters.outbound import InMemoryVideoSessionRepository
 
 #mock del adaptador de PE
 class MockStreamingController(StreamingControllerPort):
@@ -39,12 +40,17 @@ def main():
     # Crear instancias de los mocks
     streaming_controller = MockStreamingController()
     notification_controller = MockNotificationController()
+    session_repository = InMemoryVideoSessionRepository()
     # Crear instancia del servicio de ciclo de vida
-    video_lifecycle_service = VideoLifecycleServices(streaming_controller, notification_controller)
-    # Iniciar el diagnóstico
-    session_id = video_lifecycle_service.start_diagnostic()
-    # Detener el diagnóstico
-    video_lifecycle_service.stop_diagnostic(session_id)
+    video_lifecycle_service = VideoLifecycleServices(
+        streaming_controller,
+        notification_controller,
+        session_repository,
+    )
+    # Iniciar la sesion de video
+    session_id = video_lifecycle_service.start_video_session()
+    # Detener la sesion de video
+    video_lifecycle_service.stop_video_session(session_id)
     # Obtener el estado de la sesión
     status = video_lifecycle_service.get_session_status(session_id)
     print(f"Estado de la sesión: {status}")

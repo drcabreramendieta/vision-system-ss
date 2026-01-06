@@ -1,8 +1,8 @@
 
 from dependency_injector import containers, providers
-from src.Report.adapters.outbound.sqlite_report_storage_adapter import SqliteReportStorageAdapter
-from src.Report.adapters.outbound.websocket_notification_adapter import WebSocketNotificationAdapter
-from Report.application.report_services import ReportServices
+from Report.adapters.outbound import SqliteReportStorageAdapter
+from Report.adapters.outbound import WebSocketNotificationAdapter
+from Report.application import ReportServices
 
 class ReportContainer(containers.DeclarativeContainer):
     """Contenedor de DI para módulo Report."""

@@ -3,8 +3,8 @@ import cv2, numpy as np, threading
 from datetime import datetime
 from typing import Callable
 from uuid import UUID
-from Video.domain.Frame import Frame
-from Video.ports.outbound.streaming_controller_port import StreamingControllerPort
+from Video.domain import Frame
+from Video.ports.outbound import StreamingControllerPort
 
 class LocalVideoAdapter(StreamingControllerPort):
     """

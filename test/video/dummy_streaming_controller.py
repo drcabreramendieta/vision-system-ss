@@ -2,15 +2,16 @@
 
 import datetime
 from typing import Callable
-from Video.ports.outbound.streaming_controller_port import StreamingControllerPort
-from Video.domain.Frame import Frame
+from uuid import UUID
+from Video.ports.outbound import StreamingControllerPort
+from Video.domain import Frame
 
 class DummyStreamingController(StreamingControllerPort):
     """
     Dummy para simular la apertura y cierre del stream.
     Se asegura de devolver True en open_stream para indicar que el canal se abrió correctamente.
     """
-    def open_stream(self, session_id: str, observer: Callable[[Frame], None]) -> bool:
+    def open_stream(self, session_id: UUID, observer: Callable[[Frame], None]) -> bool:
         # Creamos un frame dummy.
         class DummyFrame:
             frame_id = "dummy_frame_1"
@@ -22,9 +23,9 @@ class DummyStreamingController(StreamingControllerPort):
         # Retornamos True para indicar que la apertura fue exitosa.
         return True
 
-    def get_next_frame(self, session_id: str):
+    def get_next_frame(self, session_id: UUID):
         raise NotImplementedError("No se usa en el modo observer-based.")
 
-    def close_stream(self, session_id: str) -> bool:
+    def close_stream(self, session_id: UUID) -> bool:
         # Simula cerrar el stream sin errores y retorna True.
         return True

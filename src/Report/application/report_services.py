@@ -11,12 +11,12 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 import shutil
 from uuid import UUID
-from Report.domain.ReportEntry import ReportEntry
-from Report.domain.SessionSummary import SessionSummary
-from Diagnostic.domain.InferenceLabel import InferenceLabel
-from Report.ports.inbound.report_services_port import ReportServicesPort
-from Report.ports.outbound.report_storage_port import ReportStoragePort
-from Report.ports.outbound.report_notification_controller_port import ReportNotificationPort
+from Report.domain import ReportEntry
+from Report.domain import SessionSummary
+from Diagnostic.domain import InferenceLabel
+from Report.ports.inbound import ReportServicesPort
+from Report.ports.outbound import ReportStoragePort
+from Report.ports.outbound import ReportNotificationPort
 
 class ReportServices(ReportServicesPort):
     """

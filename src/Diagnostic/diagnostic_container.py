@@ -1,10 +1,10 @@
 # src/Diagnostic/diagnostic_container.py
 from dependency_injector import containers, providers
-from Diagnostic.application.config_services import ConfigServicesImpl
-from Diagnostic.adapters.outbound.mlflow_model_repository_adapter import MlflowModelRepositoryAdapter
-from Diagnostic.adapters.outbound.diagnosis_notification_controller_adapter import DiagnosisNotificationControllerAdapter
-from Diagnostic.application.diagnosis_services import DiagnosisServicesImpl
-from Report.ports.inbound.report_services_port import ReportServicesPort
+from Diagnostic.application import ConfigServicesImpl
+from Diagnostic.adapters.outbound import MlflowModelRepositoryAdapter
+from Diagnostic.adapters.outbound import DiagnosisNotificationControllerAdapter
+from Diagnostic.application import DiagnosisServicesImpl
+from Report.ports.inbound import ReportServicesPort
 
 class DiagnosticContainer(containers.DeclarativeContainer):
     """Contenedor de DI para módulo Diagnostic."""
@@ -51,5 +51,4 @@ class DiagnosticContainer(containers.DeclarativeContainer):
         DiagnosisServicesImpl,
         model_repository=model_repository,
         notification_controller=notification_controller,
-        config_services=config_services,
     )

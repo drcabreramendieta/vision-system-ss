@@ -1,7 +1,7 @@
 # src/Report/ports/outbound/report_notification_port.py
 from abc import ABC, abstractmethod
-from Report.domain.ReportEntry import ReportEntry
-from Report.domain.SessionSummary import SessionSummary
+from Report.domain import ReportEntry
+from Report.domain import SessionSummary
 
 class ReportNotificationPort(ABC):
     @abstractmethod

@@ -1,7 +1,7 @@
 from uuid import UUID
 from typing import Callable
 from abc import ABC, abstractmethod
-from Video.domain.Frame import Frame
+from Video.domain import Frame
 
 class StreamingControllerPort(ABC):
     """

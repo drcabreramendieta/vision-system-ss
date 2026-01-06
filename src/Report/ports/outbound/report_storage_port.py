@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 from uuid import UUID
-from Report.domain.ReportEntry import ReportEntry
+from Report.domain import ReportEntry
 
 class ReportStoragePort(ABC):
     @abstractmethod

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from Diagnostic.domain.Model import Model
+from Diagnostic.domain import Model
 
 class ConfigServicesPort(ABC):
     """

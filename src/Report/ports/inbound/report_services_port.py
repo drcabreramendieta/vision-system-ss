@@ -2,8 +2,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from uuid import UUID
-from Report.domain.ReportEntry import ReportEntry
-from Report.domain.SessionSummary import SessionSummary
+from Report.domain import ReportEntry
+from Report.domain import SessionSummary
 from datetime import datetime
 import numpy as np
 

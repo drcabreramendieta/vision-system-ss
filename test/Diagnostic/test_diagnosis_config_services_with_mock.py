@@ -2,8 +2,8 @@
 
 import unittest
 from unittest.mock import MagicMock
-from Diagnostic.application.config_services import ConfigServicesImpl
-from Diagnostic.domain.Model import Model
+from Diagnostic.application import ConfigServicesImpl
+from Diagnostic.domain import Model
 
 class TestDiagnosisConfigServicesWithMock(unittest.TestCase):
     def setUp(self):
@@ -14,9 +14,7 @@ class TestDiagnosisConfigServicesWithMock(unittest.TestCase):
             Model(id="model_1", name="TestModel", description="A test model")
         ]
         # Configuramos el mock para load_model() para simular la carga exitosa.
-        self.mock_model_repository.load_model.return_value = Model(
-            id="model_1", name="TestModel", description="Loaded test model"
-        )
+        self.mock_model_repository.load_model.return_value = True
         # Instanciamos el servicio de configuración inyectando el puerto mock.
         self.config_service = ConfigServicesImpl(
             model_repository=self.mock_model_repository
@@ -36,11 +34,9 @@ class TestDiagnosisConfigServicesWithMock(unittest.TestCase):
         Verifica que set_model() invoque load_model() con el ID adecuado y almacene el modelo activo.
         """
         model_to_set = Model(id="model_1", name="TestModel", description="A test model")
-        self.config_service.set_model(model_to_set)
+        ok = self.config_service.set_model(model_to_set.id)
         self.mock_model_repository.load_model.assert_called_once_with("model_1")
-        # Se asume que el servicio guarda el modelo cargado en un atributo active_model.
-        self.assertIsNotNone(self.config_service.active_model)
-        self.assertEqual(self.config_service.active_model.description, "Loaded test model")
+        self.assertTrue(ok)
 
 if __name__ == '__main__':
     unittest.main()

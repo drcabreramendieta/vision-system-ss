@@ -1,21 +1,21 @@
-# Descripción: Puerto de entrada que expone métodos para controlar la sesión de video y, por ende, el ciclo de vida del diagnóstico.
+# Descripción: Puerto de entrada que expone métodos para controlar la sesión de video.
 from abc import ABC, abstractmethod
 from uuid import UUID
 
 class VideoLifecyclePort(ABC):
     """
-    Expone métodos para controlar la sesión de video y, por ende, el ciclo de vida del diagnóstico.
+    Expone métodos para controlar la sesión de video.
     """
     # Se debe cambiar el tipo de dato de session_id
     @abstractmethod
-    def start_diagnostic(self) -> UUID:
+    def start_video_session(self) -> UUID:
         """
-        Inicia la sesión de diagnóstico, creando o actualizando una VideoSession.
+        Inicia la sesión de video, creando o actualizando una VideoSession.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def stop_diagnostic(self,  session_id: UUID) -> str:
+    def stop_video_session(self, session_id: UUID) -> str:
         """
         Detiene la sesión, marcándola como STOPPED.
         """

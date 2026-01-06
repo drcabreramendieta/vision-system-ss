@@ -4,9 +4,9 @@ import mlflow
 import numpy as np
 import datetime
 from Diagnostic.adapters.outbound import MlflowModelRepositoryAdapter
-from Diagnostic.domain.Model import Model
-from Diagnostic.domain.DiagnosisResult import DiagnosisResult
-from Diagnostic.domain.InferenceLabel import InferenceLabel
+from Diagnostic.domain import Model
+from Diagnostic.domain import DiagnosisResult
+from Diagnostic.domain import InferenceLabel
 
 def main():
     # Configura el tracking URI para MLflow. Este valor varía según tu entorno.
@@ -34,9 +34,12 @@ def main():
 
     model_id = models[0].id
     try:
-        loaded_model = adapter.load_model(model_id)
+        loaded = adapter.load_model(model_id)
+        if not loaded:
+            print("No se pudo cargar el modelo.")
+            return
         print("\nModelo cargado:")
-        print(f"ID: {loaded_model.id}, Nombre: {loaded_model.name}, Descripción: {loaded_model.description}")
+        print(f"ID: {model_id}")
     except Exception as e:
         print(f"Error al cargar el modelo: {e}")
         return
@@ -48,7 +51,7 @@ def main():
     
     # Ejecutar la inferencia usando el adaptador.
     try:
-        diagnosis_result = adapter.run_inference(loaded_model, dummy_frame_data)
+        diagnosis_result = adapter.run_inference(dummy_frame_data, "session_dummy")
         print("\nResultado de la inferencia:")
         print(f"Etiqueta: {diagnosis_result.label}")
         print(f"Timestamp: {diagnosis_result.timestamp}")

@@ -7,10 +7,10 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 
-from Diagnostic.ports.outbound.model_repository_port import ModelRepositoryPort
-from Diagnostic.domain.Model import Model
-from Diagnostic.domain.DiagnosisResult import DiagnosisResult
-from Diagnostic.domain.InferenceLabel import InferenceLabel
+from Diagnostic.ports.outbound import ModelRepositoryPort
+from Diagnostic.domain import Model
+from Diagnostic.domain import DiagnosisResult
+from Diagnostic.domain import InferenceLabel
 
 class MlflowModelRepositoryAdapter(ModelRepositoryPort):
     def __init__(self, tracking_uri: str):
@@ -109,3 +109,6 @@ class MlflowModelRepositoryAdapter(ModelRepositoryPort):
             frame=frame,
             timestamp=datetime.now()
         )
+
+    def has_model(self) -> bool:
+        return self._active_pyfunc is not None

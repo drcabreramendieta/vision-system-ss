@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import List, Any
+from typing import List
 import numpy as np
-from Diagnostic.domain.Model import Model
-from Diagnostic.domain.DiagnosisResult import DiagnosisResult
-from Diagnostic.domain import InferenceLabel
+from Diagnostic.domain import DiagnosisResult
+from Diagnostic.domain import Model
 
 class ModelRepositoryPort(ABC):
     """
@@ -21,6 +20,13 @@ class ModelRepositoryPort(ABC):
         """
         Carga (activa) el modelo identificado por 'model_id' para futuras inferencias.
         Retorna True si la carga fue exitosa.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def has_model(self) -> bool:
+        """
+        Retorna True si hay un modelo activo en el repositorio.
         """
         raise NotImplementedError
 

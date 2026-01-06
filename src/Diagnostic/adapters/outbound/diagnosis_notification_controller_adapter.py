@@ -1,6 +1,6 @@
-from Diagnostic.ports.outbound.notification_controller_port import NotificationControllerPort
-from Report.ports.inbound.report_services_port import ReportServicesPort
-from Diagnostic.domain.DiagnosisResult import DiagnosisResult
+from Diagnostic.ports.outbound import NotificationControllerPort
+from Report.ports.inbound import ReportServicesPort
+from Diagnostic.domain import DiagnosisResult
 
 class DiagnosisNotificationControllerAdapter(NotificationControllerPort):
     """

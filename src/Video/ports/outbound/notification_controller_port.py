@@ -1,7 +1,7 @@
 from uuid import UUID
 from abc import ABC, abstractmethod
 from datetime import datetime
-from Video.domain.Frame import Frame
+from Video.domain import Frame
 
 class NotificationControllerPort(ABC):
     """

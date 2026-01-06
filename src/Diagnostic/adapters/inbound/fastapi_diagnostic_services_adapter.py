@@ -1,44 +1,19 @@
 # src/Diagnostic/adapters/inbound/fastapi_diagnostic_services_adapter.py
 from fastapi import APIRouter, HTTPException, UploadFile, Depends, Query
 from dependency_injector.wiring import inject, Provide
-from Diagnostic.ports.inbound.diagnosis_services_port import DiagnosisServicesPort
-from Diagnostic.ports.outbound.notification_controller_port import NotificationControllerPort
-#from Diagnostic import DiagnosticContainer
-from Diagnostic.domain.DiagnosisResult import DiagnosisResult
+from Diagnostic.ports.inbound import DiagnosisServicesPort
+from Diagnostic.domain import DiagnosisResult
 import numpy as np
 from PIL import Image
-from typing import List
-from Diagnostic.domain.Model import Model
-from application_container import ApplicationContainer
 
 router = APIRouter(prefix="/diagnosis", tags=["diagnosis"])
-
-@router.get("/models")
-@inject
-def list_models(
-    svc: DiagnosisServicesPort = Depends(Provide[ApplicationContainer.diagnostic.diagnosis_services]) #Antes estaba así: Depends(Provide[DiagnosticContainer.diagnosis_services])
-):
-    return [{"id": m.id, "name": m.name, "description": m.description}
-            for m in svc.get_models()]
-
-@router.post("/models/{model_id}")
-@inject
-def select_model(
-    model_id: str,
-    svc: DiagnosisServicesPort = Depends(Provide[ApplicationContainer.diagnostic.diagnosis_services])
-):  
-    ok = svc.set_model(model_id)
-    if not ok:
-        raise HTTPException(status_code=404, detail="Model not found or failed to load")
-    print("🟢 Modelo cargado en instancia:", id(svc), "active_model:", svc.config.active_model)
-    return {"status": "model set", "model_id": model_id}
 
 @router.post("/run")
 @inject
 def run_diagnosis(
     file: UploadFile,
     session_id: str = Query(..., description="UUID de la sesión de vídeo"),
-    svc: DiagnosisServicesPort = Depends(Provide[ApplicationContainer.diagnostic.diagnosis_services])
+    svc: DiagnosisServicesPort = Depends(Provide["diagnostic.diagnosis_services"])
 ):
         
     """

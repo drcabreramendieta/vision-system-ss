@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 import asyncio
 from contextlib import asynccontextmanager
-from Video.adapters.inbound.fastapi_video_services_adapter import router as video_router
-from Diagnostic.adapters.inbound.fastapi_diagnostic_services_adapter import router as diag_router
-from Report.adapters.inbound.fastapi_report_services_adapter import router as report_router
-from Report.application.report_services import ReportServices
+from Video.adapters.inbound import router as video_router
+from Diagnostic.adapters.inbound import diagnosis_router, config_router
+from Report.adapters.inbound import router as report_router
+from Report.application import ReportServices
 import application_container
 
 @asynccontextmanager
@@ -26,6 +26,7 @@ def create_app() -> FastAPI:
     container.wire(modules=[
         "Video.adapters.inbound.fastapi_video_services_adapter",
         "Diagnostic.adapters.inbound.fastapi_diagnostic_services_adapter",
+        "Diagnostic.adapters.inbound.fastapi_config_services_adapter",
         "Report.adapters.inbound.fastapi_report_services_adapter",
     ])
 
@@ -35,7 +36,8 @@ def create_app() -> FastAPI:
     app.container = container
     # 5) Montado de routers
     app.include_router(video_router)
-    app.include_router(diag_router)
+    app.include_router(diagnosis_router)
+    app.include_router(config_router)
     app.include_router(report_router)
 
     return app

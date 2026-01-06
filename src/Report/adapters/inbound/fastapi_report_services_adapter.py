@@ -3,12 +3,11 @@ from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisco
 from typing import List, Set
 from uuid import UUID
 from dependency_injector.wiring import inject, Provide
-from Report.ports.inbound.report_services_port import ReportServicesPort
+from Report.ports.inbound import ReportServicesPort
 #from Report import ReportContainer
-from Report.domain.ReportEntry import ReportEntry
-from Report.domain.SessionSummary import SessionSummary
-from application_container import ApplicationContainer
-from Report.adapters.inbound.ws_pool import connected
+from Report.domain import ReportEntry
+from Report.domain import SessionSummary
+from Report.adapters.inbound import connected
 
 router = APIRouter(prefix="/report", tags=["report"])
 
@@ -16,7 +15,7 @@ router = APIRouter(prefix="/report", tags=["report"])
 @inject
 async def add_entry(
     entry: ReportEntry,
-    svc: ReportServicesPort = Depends(Provide[ApplicationContainer.report.report_services])
+    svc: ReportServicesPort = Depends(Provide["report.report_services"])
 ):
     svc.add_result(entry)
     return {"status":"ok"}
@@ -24,7 +23,7 @@ async def add_entry(
 @router.get("/sessions", response_model=List[UUID])
 @inject
 async def list_sessions(
-    svc: ReportServicesPort = Depends(Provide[ApplicationContainer.report.report_services])
+    svc: ReportServicesPort = Depends(Provide["report.report_services"])
 ):
     return svc.list_sessions()
 
@@ -32,7 +31,7 @@ async def list_sessions(
 @inject
 async def get_entries(
     session_id: UUID,
-    svc: ReportServicesPort = Depends(Provide[ApplicationContainer.report.report_services])
+    svc: ReportServicesPort = Depends(Provide["report.report_services"])
 ):
     return svc.get_entries(session_id)
 
@@ -43,7 +42,7 @@ async def get_summary(
     operator: str,
     location: str,
     job_order: str = None,
-    svc: ReportServicesPort = Depends(Provide[ApplicationContainer.report.report_services])
+    svc: ReportServicesPort = Depends(Provide["report.report_services"])
 ):
     return svc.get_summary(session_id, operator, location, job_order)
 

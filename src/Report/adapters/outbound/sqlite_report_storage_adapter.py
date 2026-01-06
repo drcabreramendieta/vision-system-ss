@@ -7,8 +7,8 @@ import threading
 from datetime import datetime
 from typing import List, Union
 
-from Report.domain.ReportEntry import ReportEntry
-from Report.ports.outbound.report_storage_port import ReportStoragePort
+from Report.domain import ReportEntry
+from Report.ports.outbound import ReportStoragePort
 
 class SqliteReportStorageAdapter(ReportStoragePort):
     def __init__(self, db_url: str):

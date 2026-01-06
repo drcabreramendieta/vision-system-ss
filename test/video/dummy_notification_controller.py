@@ -1,6 +1,7 @@
 # file: test/video/dummy_notification_controller.py
 
-from Video.ports.outbound.notification_controller_port import NotificationControllerPort
+from uuid import UUID
+from Video.ports.outbound import NotificationControllerPort
 
 class DummyNotificationController(NotificationControllerPort):
     """
@@ -10,5 +11,5 @@ class DummyNotificationController(NotificationControllerPort):
     def __init__(self):
         self.notified_frames = []  # Lista para almacenar (session_id, frame)
 
-    def notify(self, session_id: str, frame) -> None:
+    def notify(self, session_id: UUID, frame) -> None:
         self.notified_frames.append((session_id, frame))
