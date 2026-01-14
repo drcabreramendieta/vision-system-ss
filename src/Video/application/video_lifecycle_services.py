@@ -49,6 +49,8 @@ class VideoLifecycleServices(VideoLifecyclePort):
         session = VideoSession()
         self.session_repository.add_session(session)
         observer = self._build_frame_observer(session.session_id)
+        print("[VIDEO] streaming_controller =", type(self.streaming_controller), getattr(self.streaming_controller, "rtsp_url", None))
+
         if self.streaming_controller.open_stream(session.session_id, observer):
             session.status = VideoSessionStatus.IN_PROGRESS
             self.session_repository.update_session(session)

@@ -3,6 +3,7 @@ from Video.adapters.outbound import (
     DiagnosticNotificationControllerAdapter,
     InMemoryVideoSessionRepository,
     LocalVideoAdapter,
+    RtspVideoAdapter,   # Añadido para soporte RTSP
 )
 from Video.application import VideoLifecycleServices
 from Diagnostic.ports.inbound import DiagnosisServicesPort
@@ -21,10 +22,32 @@ class VideoContainer(containers.DeclarativeContainer):
 
     session_repository = providers.Singleton(InMemoryVideoSessionRepository)
 
-    stream_controller = providers.Factory(
-        LocalVideoAdapter,
-        video_path=config.video.video_path   #Así se usan las variables de configuración
-        )
+
+    # Antes así, solo con LocalVideoAdapter para probar flujo con video local
+#    stream_controller = providers.Factory(
+#        LocalVideoAdapter,
+#        video_path=config.video.video_path   #Así se usan las variables de configuración
+#        )
+    
+# Ahora colocamos un selector de adaptador según config.yaml 
+    stream_controller = providers.Selector(
+        config.video.adapter,
+        local=providers.Factory(
+            LocalVideoAdapter,
+            video_path=config.video.video_path,
+        ),
+        rtsp=providers.Factory(
+            RtspVideoAdapter,
+            rtsp_url=config.video.rtsp_url,
+            transport=config.video.rtsp_transport,
+            low_latency=config.video.low_latency,
+            stimeout_us=config.video.stimeout_us,
+            reconnect=config.video.reconnect,
+            reconnect_delay_s=config.video.reconnect_delay_s,
+            buffer_size=config.video.buffer_size,
+        ),
+    )
+
     notification_controller = providers.Factory(
         DiagnosticNotificationControllerAdapter,
         diagnosis_services=diagnosis_services
